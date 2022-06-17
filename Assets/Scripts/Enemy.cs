@@ -5,8 +5,21 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
+	private bool _playerAlive = true;
 
-    void Update()
+	private void OnEnable()
+	{
+		Player.OnDeath += PlayerDeath;
+	}
+	private void Start()
+	{
+		float randomX = Random.Range(-9.33f, 9.33f);
+		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+
+		transform.position = spawnPos;
+	}
+
+	void Update()
     {
 		Movement();
 	}
@@ -32,14 +45,28 @@ public class Enemy : MonoBehaviour
 
 	private void Movement()
 	{
-		transform.Translate(Vector3.down * _speed * Time.deltaTime);
-
-		if (transform.position.y < -5.5f)
+		if (_playerAlive == true)
 		{
-			float randomX = Random.Range(-9.33f, 9.33f);
-			Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+			transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-			transform.position = spawnPos;
+			if (transform.position.y < -5.5f)
+			{
+				float randomX = Random.Range(-9.33f, 9.33f);
+				Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+
+				transform.position = spawnPos;
+			}
 		}
+	
+	}
+
+	private void PlayerDeath()
+	{
+		_playerAlive = false;
+	}
+
+	private void OnDisable()
+	{
+		Player.OnDeath -= PlayerDeath;
 	}
 }

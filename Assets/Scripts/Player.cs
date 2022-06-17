@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Player : MonoBehaviour
 {
 	[Header("Basic Player")]
+	[SerializeField] private bool _isAlive;
 	[SerializeField] private float _speed;
 	[SerializeField] private int _lives = 3;
 	private Vector2 _direction;
@@ -15,9 +17,16 @@ public class Player : MonoBehaviour
 	[SerializeField] private float _fireRate = 0.5f;
 	private float _nextFire;
 
+	public static event Action OnDeath;
+
 	private void OnEnable()
 	{
 		GameInput.OnFire += Fire;
+	}
+
+	private void Start()
+	{
+		_isAlive = true;
 	}
 
 	private void Update()
@@ -55,6 +64,8 @@ public class Player : MonoBehaviour
 		if (_lives < 1)
 		{
 			_lives = 0;
+			_isAlive = false;
+			OnDeath?.Invoke();
 			Destroy(gameObject);
 		}
 	}
