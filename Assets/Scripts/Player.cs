@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+	[Header("Basic Player")]
 	[SerializeField] private float _speed;
+	[SerializeField] private int _lives = 3;
 	private Vector2 _direction;
 
 	[Header("Laser")]
@@ -47,9 +49,19 @@ public class Player : MonoBehaviour
 	}
 	#endregion
 
+	public void Damage()
+	{
+		_lives--;
+		if (_lives < 1)
+		{
+			_lives = 0;
+			Destroy(gameObject);
+		}
+	}
+
 	private void Fire()
 	{
-		if(Time.time > _nextFire)
+		if (Time.time > _nextFire)
 		{
 			_nextFire = Time.time + _fireRate;
 			Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);

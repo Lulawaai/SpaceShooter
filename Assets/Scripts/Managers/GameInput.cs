@@ -33,6 +33,9 @@ public class GameInput : MonoBehaviour
 		Vector2 move;
 		move = _input.Player.Move.ReadValue<Vector2>();
 
-		_player.Move(move);
+		if (_player != null)
+		{
+			_player.Move(move);
+		}
 	}
 }
