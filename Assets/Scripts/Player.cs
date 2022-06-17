@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
-	[SerializeField] private Vector3 _laserOffset = new Vector3(0, 1f, 0);
+	[SerializeField] private Vector3 _laserOffset = new Vector3(0, 1.14f, 0);
 	[SerializeField] private float _fireRate = 0.5f;
 	private float _nextFire;
 

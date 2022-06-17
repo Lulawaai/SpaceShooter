@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-	private WaitForSeconds _wait5sec = new WaitForSeconds(1.0f);
+	private WaitForSeconds _wait5sec = new WaitForSeconds(5.0f);
 
 	[SerializeField] private GameObject _enemyPrefab;
 	[SerializeField] private GameObject _enemyContainer;
