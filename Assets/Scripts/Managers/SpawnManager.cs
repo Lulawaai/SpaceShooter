@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-	private WaitForSeconds _wait5sec = new WaitForSeconds(5.0f);
+	private WaitForSeconds _wait1sec = new WaitForSeconds(10.0f);
 
+	[SerializeField] private bool _playerAlive = true;
+
+	[Header("Enemies")]
 	[SerializeField] private GameObject _enemyPrefab;
 	[SerializeField] private GameObject _enemyContainer;
 
-	[SerializeField] private bool _playerAlive = true;
+	[Header("Power UPs")]
+	[SerializeField] private GameObject _powerUpContainer;
+	[SerializeField] private GameObject[] _powerUPPrefab;
 
 	private void OnEnable()
 	{
@@ -18,12 +23,12 @@ public class SpawnManager : MonoBehaviour
 
 	void Start()
 	{
-		StartCoroutine("SpawnEnemiesRoutine");
+		StartCoroutine(SpawnEnemiesRoutine());
+		StartCoroutine(SpawnPowerUPRoutine());
 	}
 
 	private void PlayerDead()
 	{
-		//StopCoroutine("SpawnEnemiesRoutine");
 		_playerAlive = false;
 	}
 
@@ -33,7 +38,18 @@ public class SpawnManager : MonoBehaviour
 		{
 			GameObject newEnemy = Instantiate(_enemyPrefab);
 			newEnemy.transform.parent = _enemyContainer.transform;
-			yield return _wait5sec;
+			yield return _wait1sec;
+		}
+	}
+
+	IEnumerator SpawnPowerUPRoutine()
+	{
+		while (_playerAlive == true)
+		{
+			int randomPowerUP = Random.Range(0, 3);
+			GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
+			newPower.transform.parent = _powerUpContainer.transform;
+			yield return new WaitForSeconds(Random.Range(0f, 3f));
 		}
 	}
 

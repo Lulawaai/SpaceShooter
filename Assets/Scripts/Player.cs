@@ -9,19 +9,34 @@ public class Player : MonoBehaviour
 	[SerializeField] private bool _isAlive;
 	[SerializeField] private float _speed;
 	[SerializeField] private int _lives = 3;
+	[SerializeField] private GameObject _shieldGo;
 	private Vector2 _direction;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
+	[SerializeField] private Transform _tripleLaserPrefab;
 	[SerializeField] private Vector3 _laserOffset = new Vector3(0, 1.14f, 0);
+	[SerializeField] private Vector3 _3laserOffset = new Vector3(0, -3.35f, 0);
 	[SerializeField] private float _fireRate = 0.5f;
+	[SerializeField] private bool _isTripleShotActive = false;
 	private float _nextFire;
+	private WaitForSeconds _wait5secs = new WaitForSeconds(5.0f);
+
+	[Header("Speed")]
+	[SerializeField] private float _speedPowerUP;
+	[SerializeField] private bool _isSpeepPowerUPActive = false;
+
+	[Header("Shield")]
+	[SerializeField] private bool _isShieldOn = false;
 
 	public static event Action OnDeath;
 
 	private void OnEnable()
 	{
 		GameInput.OnFire += Fire;
+		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
+		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
+		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
 	}
 
 	private void Start()
@@ -53,14 +68,33 @@ public class Player : MonoBehaviour
 	public void Move(Vector2 move)
 	{
 		_direction = move;
+		float speed = _speed;
 
-		transform.Translate(_direction * _speed * Time.deltaTime);
+		if (_isSpeepPowerUPActive == false)
+		{
+			speed = _speed;
+		}
+		else
+		{
+			speed = _speedPowerUP;
+			StartCoroutine(SpeedUPRoutine());
+		}
+
+		transform.Translate(_direction * speed * Time.deltaTime);
 	}
 	#endregion
 
 	public void Damage()
 	{
+		if (_isShieldOn == true)
+		{
+			_isShieldOn = false;
+			_shieldGo.SetActive(false);
+			return;
+		}
+
 		_lives--;
+
 		if (_lives < 1)
 		{
 			_lives = 0;
@@ -75,13 +109,54 @@ public class Player : MonoBehaviour
 		if (Time.time > _nextFire)
 		{
 			_nextFire = Time.time + _fireRate;
-			Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+
+			if (_isTripleShotActive == true)
+			{
+				Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
+				StartCoroutine(TripleLaserCoroutine());
+			}
+			else
+			{
+				Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+			}
 		}
-		
 	}
 
+	#region powerUps
+	private void TripleShotPowerUP()
+	{
+		_isTripleShotActive = true;
+	}
+
+	IEnumerator TripleLaserCoroutine()
+	{
+		yield return _wait5secs;
+		_isTripleShotActive = false;
+	}
+
+	private void SpeedPowerUP()
+	{
+		_isSpeepPowerUPActive = true;
+	}
+
+	IEnumerator SpeedUPRoutine()
+	{
+		yield return _wait5secs;
+		_isSpeepPowerUPActive = false;
+	}
+
+	private void ShieldPowerUP()
+	{
+		_isShieldOn = true;
+		_shieldGo.SetActive(true);
+	}
+	#endregion
+	  
 	private void OnDisable()
 	{
 		GameInput.OnFire -= Fire;
+		PowerUp.OnPlayerHit_TripleLaser -= TripleShotPowerUP;
+		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
+		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
 	}
 }
