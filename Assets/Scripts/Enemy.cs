@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
 	private bool _playerAlive = true;
+
+	public static event Action<int> OnEnemyDeath;
 
 	private void OnEnable()
 	{
@@ -13,7 +16,7 @@ public class Enemy : MonoBehaviour
 	}
 	private void Start()
 	{
-		float randomX = Random.Range(-9.33f, 9.33f);
+		float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
 		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
 
 		transform.position = spawnPos;
@@ -39,7 +42,9 @@ public class Enemy : MonoBehaviour
 
 		else if (other.CompareTag("Laser"))
 		{
+			int score = UnityEngine.Random.Range(10, 30);
 			Destroy(other.gameObject);
+			OnEnemyDeath?.Invoke(score);
 			Destroy(gameObject);
 		}
 	}
@@ -52,13 +57,12 @@ public class Enemy : MonoBehaviour
 
 			if (transform.position.y < -5.5f)
 			{
-				float randomX = Random.Range(-9.33f, 9.33f);
+				float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
 				Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
 
 				transform.position = spawnPos;
 			}
 		}
-	
 	}
 
 	private void PlayerDeath()

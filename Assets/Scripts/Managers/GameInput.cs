@@ -9,13 +9,21 @@ public class GameInput : MonoBehaviour
 
 	[Header("ActionMaps")]
 	[SerializeField] private Player _player;
+
 	public static event Action OnFire;
+	public static event Action OnRestartGame;
 
 	void Start()
 	{
 		_input = new GameInputActions();
 		_input.Enable();
 		_input.Player.Fire.performed += Fire_performed;
+		_input.Player.RestartGame.performed += RestartGame_performed;
+	}
+
+	private void RestartGame_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+	{
+		OnRestartGame?.Invoke();
 	}
 
 	private void Fire_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)

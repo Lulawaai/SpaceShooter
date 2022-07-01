@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-	private WaitForSeconds _wait1sec = new WaitForSeconds(10.0f);
+	[SerializeField] private float _enemyTimeSpawn = 0.1f;
+	private WaitForSeconds _waitEnemyTime;
 
 	[SerializeField] private bool _playerAlive = true;
 
@@ -23,6 +24,7 @@ public class SpawnManager : MonoBehaviour
 
 	void Start()
 	{
+		_waitEnemyTime = new WaitForSeconds(_enemyTimeSpawn);
 		StartCoroutine(SpawnEnemiesRoutine());
 		StartCoroutine(SpawnPowerUPRoutine());
 	}
@@ -38,7 +40,7 @@ public class SpawnManager : MonoBehaviour
 		{
 			GameObject newEnemy = Instantiate(_enemyPrefab);
 			newEnemy.transform.parent = _enemyContainer.transform;
-			yield return _wait1sec;
+			yield return _waitEnemyTime;
 		}
 	}
 

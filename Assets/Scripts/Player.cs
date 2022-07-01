@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private int _lives = 3;
 	[SerializeField] private GameObject _shieldGo;
 	private Vector2 _direction;
+	[SerializeField] private int _score;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private bool _isShieldOn = false;
 
 	public static event Action OnDeath;
+	public static event Action<int> OnLossingLives;
 
 	private void OnEnable()
 	{
@@ -94,6 +96,7 @@ public class Player : MonoBehaviour
 		}
 
 		_lives--;
+		OnLossingLives?.Invoke(_lives);
 
 		if (_lives < 1)
 		{
