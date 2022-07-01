@@ -6,9 +6,16 @@ using System;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
-	private bool _playerAlive = true;
+	[SerializeField] private Animator _anim;
+	[SerializeField] private Rigidbody2D _rb;
 
-	public static event Action<int> OnEnemyDeath;
+	[SerializeField] private float _enemyExploTime;
+
+	private bool _playerAlive = true;
+	private bool _isThisEnemyAlive = true;
+
+	public static event Action<int> OnEnemyDeathLaser;
+	public static event Action OnEnemyDeathPlayer;
 
 	private void OnEnable()
 	{
@@ -32,20 +39,18 @@ public class Enemy : MonoBehaviour
 		
 		if (other.CompareTag("Player"))
 		{
-			Player player = other.transform.GetComponent<Player>();
-			if (player != null)
-			{
-				other.transform.GetComponent<Player>().Damage();
-			}
-			Destroy(gameObject);
+			_isThisEnemyAlive = false;
+			OnEnemyDeathPlayer?.Invoke();
+			EnemyDeath();
 		}
 
 		else if (other.CompareTag("Laser"))
 		{
+			_isThisEnemyAlive = false;
 			int score = UnityEngine.Random.Range(10, 30);
 			Destroy(other.gameObject);
-			OnEnemyDeath?.Invoke(score);
-			Destroy(gameObject);
+			OnEnemyDeathLaser?.Invoke(score);
+			EnemyDeath();
 		}
 	}
 
@@ -55,7 +60,7 @@ public class Enemy : MonoBehaviour
 		{
 			transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-			if (transform.position.y < -5.5f)
+			if (transform.position.y < -5.5f && _isThisEnemyAlive == true)
 			{
 				float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
 				Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
@@ -68,6 +73,17 @@ public class Enemy : MonoBehaviour
 	private void PlayerDeath()
 	{
 		_playerAlive = false;
+	}
+
+	private void EnemyDeath()
+	{
+		_anim.SetBool("OnEnemyDeath", true);
+
+		//The rigidbody has to be disable
+		//the enemy cannot interact while dying.
+		_rb.isKinematic = true;
+		_rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+		Destroy(this.gameObject, _enemyExploTime);
 	}
 
 	private void OnDisable()

@@ -24,7 +24,7 @@ public class UIManager : MonoBehaviour
 
 	private void OnEnable()
 	{
-		Enemy.OnEnemyDeath += UpdateScore;
+		Enemy.OnEnemyDeathLaser += UpdateScore;
 		Player.OnLossingLives += UpdateLives;
 		Player.OnDeath += PlayerDeath;
 	}
@@ -101,7 +101,7 @@ public class UIManager : MonoBehaviour
 
 	private void OnDisable()
 	{
-		Enemy.OnEnemyDeath -= UpdateScore;
+		Enemy.OnEnemyDeathLaser -= UpdateScore;
 		Player.OnLossingLives -= UpdateLives;
 		Player.OnDeath -= PlayerDeath;
 	}

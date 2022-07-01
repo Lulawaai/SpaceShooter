@@ -6,6 +6,7 @@ public class SpawnManager : MonoBehaviour
 {
 	[SerializeField] private float _enemyTimeSpawn = 0.1f;
 	private WaitForSeconds _waitEnemyTime;
+	private WaitForSeconds _wait2Secs = new WaitForSeconds(2.0f);
 
 	[SerializeField] private bool _playerAlive = true;
 
@@ -20,13 +21,12 @@ public class SpawnManager : MonoBehaviour
 	private void OnEnable()
 	{
 		Player.OnDeath += PlayerDead;
+		Asteroid.OnAsteroidDestroyed += StartSpawning;
 	}
 
 	void Start()
 	{
 		_waitEnemyTime = new WaitForSeconds(_enemyTimeSpawn);
-		StartCoroutine(SpawnEnemiesRoutine());
-		StartCoroutine(SpawnPowerUPRoutine());
 	}
 
 	private void PlayerDead()
@@ -34,8 +34,15 @@ public class SpawnManager : MonoBehaviour
 		_playerAlive = false;
 	}
 
+	private void StartSpawning()
+	{
+		StartCoroutine(SpawnEnemiesRoutine());
+		StartCoroutine(SpawnPowerUPRoutine());
+	}
+
 	IEnumerator SpawnEnemiesRoutine()
 	{
+		yield return _wait2Secs;
 		while (_playerAlive == true)
 		{
 			GameObject newEnemy = Instantiate(_enemyPrefab);
@@ -46,6 +53,7 @@ public class SpawnManager : MonoBehaviour
 
 	IEnumerator SpawnPowerUPRoutine()
 	{
+		yield return _wait2Secs;
 		while (_playerAlive == true)
 		{
 			int randomPowerUP = Random.Range(0, 3);
@@ -58,5 +66,6 @@ public class SpawnManager : MonoBehaviour
 	private void OnDisable()
 	{
 		Player.OnDeath -= PlayerDead;
+		Asteroid.OnAsteroidDestroyed -= StartSpawning;
 	}
 }

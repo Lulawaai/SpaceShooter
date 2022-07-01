@@ -13,6 +13,10 @@ public class Player : MonoBehaviour
 	private Vector2 _direction;
 	[SerializeField] private int _score;
 
+	[Header("Damage")]
+	[SerializeField] private GameObject _damageRight;
+	[SerializeField] private GameObject _damageLeft;
+
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
 	[SerializeField] private Transform _tripleLaserPrefab;
@@ -39,11 +43,14 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
+		Enemy.OnEnemyDeathPlayer += Damage;
 	}
 
 	private void Start()
 	{
 		_isAlive = true;
+		_damageRight.SetActive(false);
+		_damageLeft.SetActive(false);
 	}
 
 	private void Update()
@@ -97,6 +104,18 @@ public class Player : MonoBehaviour
 
 		_lives--;
 		OnLossingLives?.Invoke(_lives);
+
+		switch (_lives)
+		{
+			case 3:
+				break;
+			case 2:
+				_damageLeft.SetActive(true);
+				break;
+			case 1:
+				_damageRight.SetActive(true);
+				break;
+		}
 
 		if (_lives < 1)
 		{
@@ -161,5 +180,6 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_TripleLaser -= TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
+		Enemy.OnEnemyDeathPlayer -= Damage;
 	}
 }
