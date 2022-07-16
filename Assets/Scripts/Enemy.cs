@@ -7,15 +7,20 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
 	[SerializeField] private Animator _anim;
-	[SerializeField] private Rigidbody2D _rb;
+	[SerializeField] private Collider2D _collider;
 
 	[SerializeField] private float _enemyExploTime;
 
-	private bool _playerAlive = true;
-	private bool _isThisEnemyAlive = true;
+	[SerializeField] private GameObject _laserEnemyPrefab;
+
+	private Vector3 _offsetLaser;
+
+	private bool _playerAlive;
+	private bool _isThisEnemyAlive;
 
 	public static event Action<int> OnEnemyDeathLaser;
 	public static event Action OnEnemyDeathPlayer;
+	public static event Action OnEnemyDeathPlaySound;
 
 	private void OnEnable()
 	{
@@ -27,11 +32,18 @@ public class Enemy : MonoBehaviour
 		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
 
 		transform.position = spawnPos;
+		_playerAlive = true;
+		_isThisEnemyAlive = true;
+
+		_offsetLaser = new Vector3(0, -1.08f, 0);
+
+		StartCoroutine(FireEnemyRoutine());
 	}
 
 	void Update()
     {
 		Movement();
+
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -50,6 +62,7 @@ public class Enemy : MonoBehaviour
 			int score = UnityEngine.Random.Range(10, 30);
 			Destroy(other.gameObject);
 			OnEnemyDeathLaser?.Invoke(score);
+			OnEnemyDeathPlaySound?.Invoke();
 			EnemyDeath();
 		}
 	}
@@ -79,11 +92,19 @@ public class Enemy : MonoBehaviour
 	{
 		_anim.SetBool("OnEnemyDeath", true);
 
-		//The rigidbody has to be disable
-		//the enemy cannot interact while dying.
-		_rb.isKinematic = true;
-		_rb.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
+		_collider.enabled = false;
 		Destroy(this.gameObject, _enemyExploTime);
+	}
+
+	IEnumerator FireEnemyRoutine()
+	{
+		while (_isThisEnemyAlive == true)
+		{
+			float _wait = UnityEngine.Random.Range(0, 7);
+			yield return new WaitForSeconds(_wait);
+			Instantiate(_laserEnemyPrefab, transform.position + _offsetLaser, Quaternion.identity);
+		}
+
 	}
 
 	private void OnDisable()

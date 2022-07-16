@@ -8,10 +8,12 @@ public class Player : MonoBehaviour
 	[Header("Basic Player")]
 	[SerializeField] private bool _isAlive;
 	[SerializeField] private float _speed;
-	[SerializeField] private int _lives = 3;
+	[SerializeField] private float _normalSpeed;
+	[SerializeField] private float _acceleration;
+	[SerializeField] private int _lives;
 	[SerializeField] private GameObject _shieldGo;
-	private Vector2 _direction;
 	[SerializeField] private int _score;
+	private Vector2 _direction;
 
 	[Header("Damage")]
 	[SerializeField] private GameObject _damageRight;
@@ -36,19 +38,27 @@ public class Player : MonoBehaviour
 
 	public static event Action OnDeath;
 	public static event Action<int> OnLossingLives;
+	public static event Action OnPlayerFiring;
+	public static event Action OnExplosion;
+	public static event Action OnPowerUp;
 
 	private void OnEnable()
 	{
 		GameInput.OnFire += Fire;
+		GameInput.OnSpeedingUP += Acceleration;
+		GameInput.OnSetBackNormalSpeed += Decceleration;
 		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
 		Enemy.OnEnemyDeathPlayer += Damage;
+		LaserEnemy.OnPlayerDamage += Damage;
 	}
 
 	private void Start()
 	{
+		_speed = _normalSpeed;
 		_isAlive = true;
+		_lives = 3;
 		_damageRight.SetActive(false);
 		_damageLeft.SetActive(false);
 	}
@@ -77,23 +87,35 @@ public class Player : MonoBehaviour
 	public void Move(Vector2 move)
 	{
 		_direction = move;
-		float speed = _speed;
 
 		if (_isSpeepPowerUPActive == false)
 		{
-			speed = _speed;
+			_speed = _normalSpeed;
 		}
 		else
 		{
-			speed = _speedPowerUP;
+			_speed = _speedPowerUP;
 			StartCoroutine(SpeedUPRoutine());
 		}
 
-		transform.Translate(_direction * speed * Time.deltaTime);
+		transform.Translate(_direction * _speed * Time.deltaTime);
 	}
+
+	private void Acceleration()
+	{
+		Debug.Log("speed changed to: " + _speed);
+		Debug.Log("acceleration changed to: " + _acceleration);
+		_speed += _acceleration;
+	}
+
+	private void Decceleration()
+	{
+		_speed = _normalSpeed;
+	}
+
 	#endregion
 
-	public void Damage()
+	private void Damage()
 	{
 		if (_isShieldOn == true)
 		{
@@ -103,6 +125,7 @@ public class Player : MonoBehaviour
 		}
 
 		_lives--;
+		OnExplosion?.Invoke();
 		OnLossingLives?.Invoke(_lives);
 
 		switch (_lives)
@@ -135,11 +158,13 @@ public class Player : MonoBehaviour
 			if (_isTripleShotActive == true)
 			{
 				Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
+				OnPlayerFiring?.Invoke();
 				StartCoroutine(TripleLaserCoroutine());
 			}
 			else
 			{
 				Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+				OnPlayerFiring?.Invoke();
 			}
 		}
 	}
@@ -148,6 +173,7 @@ public class Player : MonoBehaviour
 	private void TripleShotPowerUP()
 	{
 		_isTripleShotActive = true;
+		OnPowerUp?.Invoke();
 	}
 
 	IEnumerator TripleLaserCoroutine()
@@ -159,6 +185,7 @@ public class Player : MonoBehaviour
 	private void SpeedPowerUP()
 	{
 		_isSpeepPowerUPActive = true;
+		OnPowerUp?.Invoke();
 	}
 
 	IEnumerator SpeedUPRoutine()
@@ -171,15 +198,19 @@ public class Player : MonoBehaviour
 	{
 		_isShieldOn = true;
 		_shieldGo.SetActive(true);
+		OnPowerUp?.Invoke();
 	}
 	#endregion
 	  
 	private void OnDisable()
 	{
 		GameInput.OnFire -= Fire;
+		GameInput.OnSpeedingUP += Acceleration;
+		GameInput.OnSetBackNormalSpeed += Decceleration;
 		PowerUp.OnPlayerHit_TripleLaser -= TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
 		Enemy.OnEnemyDeathPlayer -= Damage;
+		LaserEnemy.OnPlayerDamage -= Damage;
 	}
 }

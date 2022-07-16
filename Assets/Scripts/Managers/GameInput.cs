@@ -12,6 +12,9 @@ public class GameInput : MonoBehaviour
 
 	public static event Action OnFire;
 	public static event Action OnRestartGame;
+	public static event Action OnQuitGame;
+	public static event Action OnSpeedingUP;
+	public static event Action OnSetBackNormalSpeed;
 
 	void Start()
 	{
@@ -19,6 +22,18 @@ public class GameInput : MonoBehaviour
 		_input.Enable();
 		_input.Player.Fire.performed += Fire_performed;
 		_input.Player.RestartGame.performed += RestartGame_performed;
+		_input.Player.ESCGame.performed += ESCGame_performed;
+		_input.Player.SpeedUP.performed += SpeedUP_performed;
+	}
+
+	private void SpeedUP_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+	{
+		OnSpeedingUP?.Invoke();
+	}
+
+	private void ESCGame_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
+	{
+		OnQuitGame?.Invoke();
 	}
 
 	private void RestartGame_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -34,6 +49,11 @@ public class GameInput : MonoBehaviour
 	private void Update()
 	{
 		movePlayer();
+
+		if (_input.Player.SpeedUP.WasReleasedThisFrame())
+		{
+			OnSetBackNormalSpeed?.Invoke();
+		}
 	}
 
 	private void movePlayer()

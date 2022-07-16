@@ -49,8 +49,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   _anim: {fileID: 667945742}
-  _rb: {fileID: 3829698761301054227}
+  _collider: {fileID: 467926412191212309}
   _enemyExploTime: 2
+  _laserEnemyPrefab: {fileID: 3752386393466435287, guid: dd46e60358cc54d1c85890d018c882e9, type: 3}
 --- !u!212 &758304547473395177
 SpriteRenderer:
   m_ObjectHideFlags: 0

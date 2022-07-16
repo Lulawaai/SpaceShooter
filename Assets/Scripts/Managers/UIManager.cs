@@ -10,11 +10,16 @@ public class UIManager : MonoBehaviour
 	[SerializeField] private Sprite[] _lives;
 	[SerializeField] private Image _livesImage;
 	[SerializeField] private float _timeGameOverFlicker;
+	[SerializeField] private bool _mobileDevice = true;
 
-	[Header("TextUI")]
+	[Header("ButtonsUI")]
 	[SerializeField] private TMP_Text _gameOverText;
 	[SerializeField] private TMP_Text _restartText;
 	[SerializeField] private GameObject _restartButton;
+	[SerializeField] private GameObject _joyStick;
+	[SerializeField] private GameObject _fireOnscreenButton;
+	[SerializeField] private GameObject _mobileOption;
+	[SerializeField] private GameObject _desktopOption;
 
 	private WaitForSeconds _waitFlicker;
 
@@ -31,7 +36,8 @@ public class UIManager : MonoBehaviour
 
 	void Start()
 	{
-		GameStartSteps();
+		_mobileOption.SetActive(true);
+		_desktopOption.SetActive(false);
 
 		_scoreText.text = "Score: " + _score.ToString();
 		_livesImage.sprite = _lives[3];
@@ -77,12 +83,26 @@ public class UIManager : MonoBehaviour
 		_gameOverText.gameObject.SetActive(false);
 		_restartText.gameObject.SetActive(false);
 		_restartButton.SetActive(false);
+
+		if (_mobileDevice == true)
+		{
+			_joyStick.SetActive(true);
+			_fireOnscreenButton.SetActive(true);
+		}
+		else
+		{
+			_joyStick.SetActive(false);
+			_fireOnscreenButton.SetActive(false);
+		}
+
 	}
 
 	private void GameOverSteps()
 	{
 		_restartText.gameObject.SetActive(true);
 		_restartButton.SetActive(true);
+		_joyStick.SetActive(false);
+		_fireOnscreenButton.SetActive(false);
 	}
 
 	IEnumerator GameoverFlickerRoutine()
@@ -96,7 +116,26 @@ public class UIManager : MonoBehaviour
 
 			yield return _waitFlicker;
 		}
+	}
 
+	public void MobileDevice()
+	{
+		_mobileDevice = true;
+		GameStartSteps();
+		_mobileOption.SetActive(false);
+		_desktopOption.SetActive(true);
+		_fireOnscreenButton.SetActive(true);
+		_joyStick.SetActive(true);
+	}
+
+	public void DesktopDevice()
+	{
+		_mobileDevice = false;
+		GameStartSteps();
+		_mobileOption.SetActive(true);
+		_desktopOption.SetActive(false);
+		_fireOnscreenButton.SetActive(false);
+		_joyStick.SetActive(false);
 	}
 
 	private void OnDisable()

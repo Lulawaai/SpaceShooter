@@ -5,15 +5,18 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-	//Player gives us when is gameover
-	//inputManager when 'R' key is performed
-
 	private bool _isGameOver;
 
 	private void OnEnable()
 	{
 		Player.OnDeath += GameOver;
 		GameInput.OnRestartGame += RestartGame;
+		GameInput.OnQuitGame += QuitGame;
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 
 	private void Start()
@@ -33,9 +36,12 @@ public class GameManager : MonoBehaviour
 		_isGameOver = true;
 	}
 
+
+
 	private void OnDisable()
 	{
 		Player.OnDeath -= GameOver;
 		GameInput.OnRestartGame -= RestartGame;
+		GameInput.OnQuitGame -= QuitGame;
 	}
 }

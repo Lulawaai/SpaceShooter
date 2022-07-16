@@ -31,6 +31,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ESCGame",
+                    "type": "Button",
+                    "id": "9b40ff95-abcb-4963-b959-1411acffddad",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SpeedUP",
+                    "type": "Button",
+                    "id": "7be815df-5110-4206-9a10-2fe807fe1312",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -146,6 +164,17 @@
                 },
                 {
                     "name": "",
+                    "id": "efadf6ae-9566-4287-b0b0-13c69c96f06e",
+                    "path": "<Joystick>/stick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ce06be99-0aa3-4ddc-a74f-1f23fb2c69e4",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -185,6 +214,39 @@
                     "processors": "",
                     "groups": "",
                     "action": "RestartGame",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8f229839-e57d-47f2-aa4c-aca0af13e1e2",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ESCGame",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "674c3527-707e-4d8d-b168-79900eddfa1a",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpeedUP",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4ac91c2d-c5fe-45b0-8781-dfffe2d3d633",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SpeedUP",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

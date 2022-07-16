@@ -53,6 +53,24 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ESCGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""9b40ff95-abcb-4963-b959-1411acffddad"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SpeedUP"",
+                    ""type"": ""Button"",
+                    ""id"": ""7be815df-5110-4206-9a10-2fe807fe1312"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -168,6 +186,17 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""efadf6ae-9566-4287-b0b0-13c69c96f06e"",
+                    ""path"": ""<Joystick>/stick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ce06be99-0aa3-4ddc-a74f-1f23fb2c69e4"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
@@ -209,6 +238,39 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""RestartGame"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8f229839-e57d-47f2-aa4c-aca0af13e1e2"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ESCGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""674c3527-707e-4d8d-b168-79900eddfa1a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpeedUP"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ac91c2d-c5fe-45b0-8781-dfffe2d3d633"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SpeedUP"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -220,6 +282,8 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_RestartGame = m_Player.FindAction("RestartGame", throwIfNotFound: true);
+        m_Player_ESCGame = m_Player.FindAction("ESCGame", throwIfNotFound: true);
+        m_Player_SpeedUP = m_Player.FindAction("SpeedUP", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -282,6 +346,8 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_RestartGame;
+    private readonly InputAction m_Player_ESCGame;
+    private readonly InputAction m_Player_SpeedUP;
     public struct PlayerActions
     {
         private @GameInputActions m_Wrapper;
@@ -289,6 +355,8 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @RestartGame => m_Wrapper.m_Player_RestartGame;
+        public InputAction @ESCGame => m_Wrapper.m_Player_ESCGame;
+        public InputAction @SpeedUP => m_Wrapper.m_Player_SpeedUP;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -307,6 +375,12 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                 @RestartGame.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestartGame;
                 @RestartGame.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestartGame;
                 @RestartGame.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRestartGame;
+                @ESCGame.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnESCGame;
+                @ESCGame.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnESCGame;
+                @ESCGame.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnESCGame;
+                @SpeedUP.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
+                @SpeedUP.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
+                @SpeedUP.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -320,6 +394,12 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                 @RestartGame.started += instance.OnRestartGame;
                 @RestartGame.performed += instance.OnRestartGame;
                 @RestartGame.canceled += instance.OnRestartGame;
+                @ESCGame.started += instance.OnESCGame;
+                @ESCGame.performed += instance.OnESCGame;
+                @ESCGame.canceled += instance.OnESCGame;
+                @SpeedUP.started += instance.OnSpeedUP;
+                @SpeedUP.performed += instance.OnSpeedUP;
+                @SpeedUP.canceled += instance.OnSpeedUP;
             }
         }
     }
@@ -329,5 +409,7 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnRestartGame(InputAction.CallbackContext context);
+        void OnESCGame(InputAction.CallbackContext context);
+        void OnSpeedUP(InputAction.CallbackContext context);
     }
 }
