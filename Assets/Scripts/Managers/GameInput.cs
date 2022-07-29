@@ -23,7 +23,7 @@ public class GameInput : MonoBehaviour
 		_input.Player.Fire.performed += Fire_performed;
 		_input.Player.RestartGame.performed += RestartGame_performed;
 		_input.Player.ESCGame.performed += ESCGame_performed;
-		_input.Player.SpeedUP.performed += SpeedUP_performed;
+		//_input.Player.SpeedUP.performed += SpeedUP_performed;
 	}
 
 	private void SpeedUP_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -48,15 +48,12 @@ public class GameInput : MonoBehaviour
 
 	private void Update()
 	{
-		movePlayer();
-
-		if (_input.Player.SpeedUP.WasReleasedThisFrame())
-		{
-			OnSetBackNormalSpeed?.Invoke();
-		}
+		MovePlayer();
+		SpeedUP();
+		BackNormalSpeed();
 	}
 
-	private void movePlayer()
+	private void MovePlayer()
 	{
 		Vector2 move;
 		move = _input.Player.Move.ReadValue<Vector2>();
@@ -64,6 +61,22 @@ public class GameInput : MonoBehaviour
 		if (_player != null)
 		{
 			_player.Move(move);
+		}
+	}
+
+	private void SpeedUP()
+    {
+		if (_input.Player.SpeedUP.IsPressed())
+		{
+			OnSpeedingUP?.Invoke();
+		}
+	}
+
+	private void BackNormalSpeed()
+    {
+		if (_input.Player.SpeedUP.WasReleasedThisFrame())
+		{
+			OnSetBackNormalSpeed?.Invoke();
 		}
 	}
 }

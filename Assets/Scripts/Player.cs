@@ -5,19 +5,20 @@ using System;
 
 public class Player : MonoBehaviour
 {
-	[Header("Basic Player")]
-	[SerializeField] private bool _isAlive;
-	[SerializeField] private float _speed;
-	[SerializeField] private float _normalSpeed;
-	[SerializeField] private float _acceleration;
-	[SerializeField] private int _lives;
-	[SerializeField] private GameObject _shieldGo;
-	[SerializeField] private int _score;
-	private Vector2 _direction;
+    [Header("Basic Player")]
+    [SerializeField] private bool _isAlive;
+    [SerializeField] private float _speed;
+    [SerializeField] private bool _isSpeedUP = false;
+    [SerializeField] private float _normalSpeed;
+    [SerializeField] private float _acceleration;
+    [SerializeField] private int _lives;
+    [SerializeField] private GameObject _shieldGo;
+    [SerializeField] private int _score;
+    private Vector2 _direction;
 
-	[Header("Damage")]
-	[SerializeField] private GameObject _damageRight;
-	[SerializeField] private GameObject _damageLeft;
+    [Header("Damage")]
+    [SerializeField] private GameObject _damageRight;
+    [SerializeField] private GameObject _damageLeft;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
@@ -84,33 +85,48 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	public void Move(Vector2 move)
+    public void Move(Vector2 move)
 	{
-		_direction = move;
+        //normal speed
+        //acceleration
+        //power speed
 
-		if (_isSpeepPowerUPActive == false)
+        _direction = move;
+
+        if (_isSpeepPowerUPActive == false && _isSpeedUP == false)
 		{
-			_speed = _normalSpeed;
-		}
-		else
-		{
-			_speed = _speedPowerUP;
-			StartCoroutine(SpeedUPRoutine());
-		}
+            _speed = _normalSpeed;
+        }
+
+        if (_isSpeepPowerUPActive == true && _isSpeedUP == false)
+        {
+            _speed = _speedPowerUP;
+            StartCoroutine(SpeedUPRoutine());
+        }
+
+        if (_isSpeedUP == true)
+        {
+            _speed += _acceleration;
+
+			if (_speed > 30)
+            {
+				_speed = 30;
+            }
+        }
 
 		transform.Translate(_direction * _speed * Time.deltaTime);
 	}
 
 	private void Acceleration()
 	{
-		Debug.Log("speed changed to: " + _speed);
-		Debug.Log("acceleration changed to: " + _acceleration);
-		_speed += _acceleration;
+        _isSpeedUP = true;
+		//_speed += _acceleration;
 	}
 
 	private void Decceleration()
 	{
-		_speed = _normalSpeed;
+		_isSpeedUP = false;
+		//_speed = _normalSpeed;
 	}
 
 	#endregion
