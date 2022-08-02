@@ -7,30 +7,30 @@ public class PowerUp : MonoBehaviour
 {
 	[SerializeField] private float _speed = 3.0f;
 
-	//0 == TripleLaser, 1 == Speed, 2 == Shield
-	[Header("0-TripleLaser, 1-Speed, 2-Shield")]
-	[SerializeField] int _powerUpID;
+    //0 == TripleLaser, 1 == Speed, 2 == Shield
+    [Header("0-TripleLaser, 1-Speed, 2-Shield")]
+    [SerializeField] int _powerUpID;
 
-	public static event Action OnPlayerHit_TripleLaser;
-	public static event Action OnPlayerHit_Speed;
-	public static event Action OnPlayerHit_Shield;
+    public static event Action OnPlayerHit_TripleLaser;
+    public static event Action OnPlayerHit_Speed;
+    public static event Action OnPlayerHit_Shield;
 
-	private void Start()
-	{
-		float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
-		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+    private void Start()
+    {
+        float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
+        Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
 
-		transform.position = spawnPos;
-	}
+        transform.position = spawnPos;
+    }
 
-	private void Update()
-	{
-		Move();
-	}
+    private void Update()
+    {
+        Move();
+    }
 
-	private void OnTriggerEnter2D(Collider2D other)
-	{
-		if (other.CompareTag("Player"))
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
 		{
 			switch (_powerUpID)
 			{

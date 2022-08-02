@@ -12,7 +12,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float _normalSpeed;
     [SerializeField] private float _acceleration;
     [SerializeField] private int _lives;
-    [SerializeField] private GameObject _shieldGo;
     [SerializeField] private int _score;
     private Vector2 _direction;
 
@@ -36,6 +35,8 @@ public class Player : MonoBehaviour
 
 	[Header("Shield")]
 	[SerializeField] private bool _isShieldOn = false;
+	[SerializeField] private GameObject[] _shieldGo;
+    [SerializeField] private int _shieldNumber = 3;
 
 	public static event Action OnDeath;
 	public static event Action<int> OnLossingLives;
@@ -110,7 +111,7 @@ public class Player : MonoBehaviour
 
 			if (_speed > 30)
             {
-				_speed = 30;
+                _speed = 30;
             }
         }
 
@@ -120,13 +121,11 @@ public class Player : MonoBehaviour
 	private void Acceleration()
 	{
         _isSpeedUP = true;
-		//_speed += _acceleration;
 	}
 
 	private void Decceleration()
 	{
 		_isSpeedUP = false;
-		//_speed = _normalSpeed;
 	}
 
 	#endregion
@@ -135,8 +134,14 @@ public class Player : MonoBehaviour
 	{
 		if (_isShieldOn == true)
 		{
-			_isShieldOn = false;
-			_shieldGo.SetActive(false);
+            if (_shieldNumber > 0)
+            {
+				_shieldGo[_shieldNumber - 1].SetActive(false);
+				_shieldNumber -= 1;
+            }
+			else
+                _isShieldOn = false;
+
 			return;
 		}
 
@@ -213,8 +218,14 @@ public class Player : MonoBehaviour
 	private void ShieldPowerUP()
 	{
 		_isShieldOn = true;
-		_shieldGo.SetActive(true);
 		OnPowerUp?.Invoke();
+
+		int i = 0;
+		while(i < 3)
+        {
+			_shieldGo[i].SetActive(true);
+            i++;
+        }
 	}
 	#endregion
 	  
