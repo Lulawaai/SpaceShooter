@@ -60,7 +60,7 @@ public class GameInput : MonoBehaviour
 
 		if (_player != null)
 		{
-			_player.Move(move);
+            _player.Move(move);
 		}
 	}
 

@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float _acceleration;
     [SerializeField] private int _lives;
     [SerializeField] private int _score;
+    [SerializeField] private int _numberShots;
+	[SerializeField] private bool _isOutofShots;
     private Vector2 _direction;
 
     [Header("Damage")]
@@ -38,11 +40,12 @@ public class Player : MonoBehaviour
 	[SerializeField] private GameObject[] _shieldGo;
     [SerializeField] private int _shieldNumber = 3;
 
-	public static event Action OnDeath;
-	public static event Action<int> OnLossingLives;
-	public static event Action OnPlayerFiring;
-	public static event Action OnExplosion;
-	public static event Action OnPowerUp;
+    public static event Action OnDeath;
+    public static event Action<int> OnLossingLives;
+    public static event Action OnPlayerFiring;
+    public static event Action OnExplosion;
+    public static event Action OnPowerUp;
+    public static event Action OnOutofShots;
 
 	private void OnEnable()
 	{
@@ -68,10 +71,16 @@ public class Player : MonoBehaviour
 	private void Update()
 	{
 		ClampPlayerMove();
+
+		if (_numberShots == 0 && _isOutofShots == false)
+        {
+            OnOutofShots?.Invoke(); //to play out of shot sound
+            _isOutofShots = true;
+        }
 	}
 
-	#region PlayerMove
-	private void ClampPlayerMove()
+    #region PlayerMove
+    private void ClampPlayerMove()
 	{
 		transform.position = new Vector2(transform.position.x, Mathf.Clamp(transform.position.y, -3.5f, 1));
 
@@ -128,9 +137,9 @@ public class Player : MonoBehaviour
 		_isSpeedUP = false;
 	}
 
-	#endregion
+    #endregion
 
-	private void Damage()
+    private void Damage()
 	{
 		if (_isShieldOn == true)
 		{
@@ -172,22 +181,25 @@ public class Player : MonoBehaviour
 
 	private void Fire()
 	{
-		if (Time.time > _nextFire)
+        if (Time.time > _nextFire && _numberShots > 0)
 		{
 			_nextFire = Time.time + _fireRate;
 
 			if (_isTripleShotActive == true)
 			{
 				Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
-				OnPlayerFiring?.Invoke();
+				OnPlayerFiring?.Invoke(); //to play fire sound audioManager
+				_numberShots -= 1;
 				StartCoroutine(TripleLaserCoroutine());
 			}
-			else
+            else
 			{
-				Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
-				OnPlayerFiring?.Invoke();
+                Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+                OnPlayerFiring?.Invoke(); //to play fire sound audioManager
+                _numberShots -= 1;
 			}
 		}
+
 	}
 
 	#region powerUps

@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource _laserAudioS;
 	[SerializeField] private AudioSource _explosionAudioS;
 	[SerializeField] private AudioSource _powerUpAudioS;
+	[SerializeField] private AudioSource _noMoreFireAudioS;
 
 	private void OnEnable()
 	{
@@ -15,10 +16,16 @@ public class AudioManager : MonoBehaviour
 		Player.OnExplosion += PlayExplosionSound;
 		Player.OnPowerUp += PlayPowerUpSound;
 		Player.OnDeath += StopBackgroundMusic;
+		Player.OnOutofShots += PlayNoMoreAmmo;
 		Asteroid.OnAsteroidDestroyed += PlayExplosionSound;
 		Asteroid.OnAsteroidDestroyed += PlayBackgroundMusic;
 		Enemy.OnEnemyDeathPlaySound += PlayExplosionSound;
 	}
+
+	private void PlayNoMoreAmmo()
+    {
+        _noMoreFireAudioS.Play();
+    }
 
 	private void PlayBackgroundMusic()
 	{
@@ -51,6 +58,7 @@ public class AudioManager : MonoBehaviour
 		Player.OnExplosion -= PlayExplosionSound;
 		Player.OnPowerUp -= PlayPowerUpSound;
 		Player.OnDeath -= StopBackgroundMusic;
+		Player.OnOutofShots -= PlayNoMoreAmmo;
 		Asteroid.OnAsteroidDestroyed -= PlayExplosionSound;
 		Asteroid.OnAsteroidDestroyed -= PlayBackgroundMusic;
 		Enemy.OnEnemyDeathPlaySound -= PlayExplosionSound;

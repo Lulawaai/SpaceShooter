@@ -942,6 +942,8 @@ MonoBehaviour:
   _acceleration: 2
   _lives: 3
   _score: 0
+  _numberShots: 15
+  _isOutofShots: 0
   _damageRight: {fileID: 1257478135}
   _damageLeft: {fileID: 443606039}
   _laserPrefab: {fileID: 5570246605067320359, guid: 087a2dc9f1047461691f6e8e3c2db787, type: 3}
@@ -2265,6 +2267,133 @@ MonoBehaviour:
   - {fileID: 6669241927347790908, guid: ccabcda42c8d245d2a2bdd61dd46e5a2, type: 3}
   - {fileID: 7707169393273498162, guid: 83f23fe19580147da828a8d78535a4df, type: 3}
   - {fileID: 3978923964131651178, guid: d547801fab3d34607971d8d58477a6c9, type: 3}
+--- !u!1 &1197908654
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1197908655}
+  - component: {fileID: 1197908656}
+  m_Layer: 0
+  m_Name: NoMoreAmmoSound
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1197908655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197908654}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1742246691}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &1197908656
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197908654}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: e440eb3f5fad84350b60652ca8b21fc8, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1257478135
 GameObject:
   m_ObjectHideFlags: 0
@@ -3478,6 +3607,7 @@ Transform:
   - {fileID: 1092857114}
   - {fileID: 318184649}
   - {fileID: 100574728}
+  - {fileID: 1197908655}
   m_Father: {fileID: 656788469}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3593,6 +3723,7 @@ MonoBehaviour:
   _laserAudioS: {fileID: 1092857115}
   _explosionAudioS: {fileID: 318184650}
   _powerUpAudioS: {fileID: 100574729}
+  _noMoreFireAudioS: {fileID: 1197908656}
 --- !u!1 &1752910610
 GameObject:
   m_ObjectHideFlags: 0
@@ -4169,6 +4300,10 @@ PrefabInstance:
     - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
       propertyPath: _normalSpeed
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
+      propertyPath: _numberShots
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
       propertyPath: _acceleration
