@@ -55,6 +55,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
+        PowerUp.OnPlayerHit_FireRefill += FireRefill;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		LaserEnemy.OnPlayerDamage += Damage;
 	}
@@ -239,6 +240,11 @@ public class Player : MonoBehaviour
             i++;
         }
 	}
+
+	private void FireRefill()
+    {
+        _numberShots = 15;
+    }
 	#endregion
 	  
 	private void OnDisable()
@@ -249,6 +255,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_TripleLaser -= TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
+        PowerUp.OnPlayerHit_FireRefill -= FireRefill;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		LaserEnemy.OnPlayerDamage -= Damage;
 	}

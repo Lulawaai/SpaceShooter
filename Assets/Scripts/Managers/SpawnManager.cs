@@ -56,10 +56,10 @@ public class SpawnManager : MonoBehaviour
 		yield return _wait2Secs;
 		while (_playerAlive == true)
 		{
-			int randomPowerUP = Random.Range(0, 3);
-			GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
-			newPower.transform.parent = _powerUpContainer.transform;
-			yield return new WaitForSeconds(Random.Range(0f, 3f));
+            int randomPowerUP = Random.Range(0, 4);
+            GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
+            newPower.transform.parent = _powerUpContainer.transform;
+            yield return new WaitForSeconds(Random.Range(0f, 3f));
 		}
 	}
 
