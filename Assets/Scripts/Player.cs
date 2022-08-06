@@ -160,17 +160,7 @@ public class Player : MonoBehaviour
 		OnExplosion?.Invoke();
 		OnLossingLives?.Invoke(_lives);
 
-		switch (_lives)
-		{
-			case 3:
-				break;
-			case 2:
-				_damageLeft.SetActive(true);
-				break;
-			case 1:
-				_damageRight.SetActive(true);
-				break;
-		}
+		PlayerDamageUpdate();
 
 		if (_lives < 1)
 		{
@@ -181,7 +171,25 @@ public class Player : MonoBehaviour
 		}
 	}
 
-	private void Fire()
+    private void PlayerDamageUpdate()
+    {
+        switch (_lives)
+        {
+            case 3:
+                _damageLeft.SetActive(false);
+                _damageRight.SetActive(false);
+				break;
+            case 2:
+                _damageLeft.SetActive(true);
+                _damageRight.SetActive(false);
+                break;
+            case 1:
+                _damageRight.SetActive(true);
+                break;
+        }
+	}
+
+    private void Fire()
 	{
         if (Time.time > _nextFire && _numberShots > 0)
 		{
@@ -200,8 +208,7 @@ public class Player : MonoBehaviour
                 OnPlayerFiring?.Invoke(); //to play fire sound audioManager
                 _numberShots -= 1;
 			}
-		}
-
+        }
 	}
 
 	#region powerUps
@@ -249,7 +256,12 @@ public class Player : MonoBehaviour
 
 	private void HealthRefill()
     {
-        _lives = 3;
+		if (_lives < 3)
+        {
+			_lives += 1;
+            OnLossingLives?.Invoke(_lives); //update UI
+            PlayerDamageUpdate();
+		}
     }
 	#endregion
 	  
