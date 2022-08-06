@@ -32,11 +32,9 @@ public class GameManager : MonoBehaviour
 	}
 
 	private void GameOver()
-	{
-		_isGameOver = true;
-	}
-
-
+    {
+        _isGameOver = true;
+    }
 
 	private void OnDisable()
 	{

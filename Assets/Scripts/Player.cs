@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill += FireRefill;
+        PowerUp.OnPlayerHit_Health += HealthRefill;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		LaserEnemy.OnPlayerDamage += Damage;
 	}
@@ -245,6 +246,11 @@ public class Player : MonoBehaviour
     {
         _numberShots = 15;
     }
+
+	private void HealthRefill()
+    {
+        _lives = 3;
+    }
 	#endregion
 	  
 	private void OnDisable()
@@ -256,6 +262,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill -= FireRefill;
+        PowerUp.OnPlayerHit_Health -= HealthRefill;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		LaserEnemy.OnPlayerDamage -= Damage;
 	}

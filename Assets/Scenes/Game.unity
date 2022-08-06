@@ -2268,6 +2268,8 @@ MonoBehaviour:
   - {fileID: 7707169393273498162, guid: 83f23fe19580147da828a8d78535a4df, type: 3}
   - {fileID: 3978923964131651178, guid: d547801fab3d34607971d8d58477a6c9, type: 3}
   - {fileID: 2239011248125801316, guid: 1c2298b0f34aa4c6dbaab23474abe287, type: 3}
+  - {fileID: 3522135115542643486, guid: 95ecaae0f7aba497c8592fcbb8348855, type: 3}
+  _numberPowerUps: 5
 --- !u!1 &1197908654
 GameObject:
   m_ObjectHideFlags: 0

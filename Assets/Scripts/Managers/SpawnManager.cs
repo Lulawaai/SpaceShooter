@@ -17,6 +17,7 @@ public class SpawnManager : MonoBehaviour
 	[Header("Power UPs")]
 	[SerializeField] private GameObject _powerUpContainer;
 	[SerializeField] private GameObject[] _powerUPPrefab;
+    [SerializeField] private int _numberPowerUps;
 
 	private void OnEnable()
 	{
@@ -56,7 +57,7 @@ public class SpawnManager : MonoBehaviour
 		yield return _wait2Secs;
 		while (_playerAlive == true)
 		{
-            int randomPowerUP = Random.Range(0, 4);
+            int randomPowerUP = Random.Range(0, _numberPowerUps);
             GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
             newPower.transform.parent = _powerUpContainer.transform;
             yield return new WaitForSeconds(Random.Range(0f, 3f));
