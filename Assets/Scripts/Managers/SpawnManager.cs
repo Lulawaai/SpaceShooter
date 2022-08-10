@@ -39,6 +39,7 @@ public class SpawnManager : MonoBehaviour
 	{
 		StartCoroutine(SpawnEnemiesRoutine());
 		StartCoroutine(SpawnPowerUPRoutine());
+        StartCoroutine(ExtraFireRoutine());
 	}
 
 	IEnumerator SpawnEnemiesRoutine()
@@ -63,6 +64,18 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(0f, 3f));
 		}
 	}
+
+	IEnumerator ExtraFireRoutine()
+    {
+        yield return _wait2Secs;
+		if (_playerAlive == true)
+        {
+			yield return new WaitForSeconds(Random.Range(4f, 6f));
+            GameObject firePower = Instantiate(_powerUPPrefab[5]);
+            firePower.transform.parent = _powerUpContainer.transform;
+		}
+
+    }
 
 	private void OnDisable()
 	{

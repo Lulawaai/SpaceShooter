@@ -31,8 +31,7 @@ public class UIManager : MonoBehaviour
 	{
 		Enemy.OnEnemyDeathLaser += UpdateScore;
 		Player.OnLossingLives += UpdateLives;
-		Player.OnDeath += PlayerDeath;
-		PowerUp.OnPlayerHit_Health += RefillHealth;
+        Player.OnDeath += PlayerDeath;
 	}
 
 	void Start()
@@ -98,11 +97,6 @@ public class UIManager : MonoBehaviour
 
 	}
 
-    private void RefillHealth()
-    {
-		_livesImage.sprite = _lives[3];
-    }
-
     private void GameOverSteps()
 	{
 		_restartText.gameObject.SetActive(true);
@@ -149,6 +143,5 @@ public class UIManager : MonoBehaviour
 		Enemy.OnEnemyDeathLaser -= UpdateScore;
 		Player.OnLossingLives -= UpdateLives;
 		Player.OnDeath -= PlayerDeath;
-        PowerUp.OnPlayerHit_Health -= RefillHealth;
 	}
 }

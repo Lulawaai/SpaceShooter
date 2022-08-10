@@ -5,21 +5,21 @@ using System;
 
 public class Player : MonoBehaviour
 {
-    [Header("Basic Player")]
-    [SerializeField] private bool _isAlive;
-    [SerializeField] private float _speed;
-    [SerializeField] private bool _isSpeedUP = false;
-    [SerializeField] private float _normalSpeed;
-    [SerializeField] private float _acceleration;
-    [SerializeField] private int _lives;
-    [SerializeField] private int _score;
-    [SerializeField] private int _numberShots;
+	[Header("Basic Player")]
+	[SerializeField] private bool _isAlive;
+	[SerializeField] private float _speed;
+	[SerializeField] private bool _isSpeedUP = false;
+	[SerializeField] private float _normalSpeed;
+	[SerializeField] private float _acceleration;
+	[SerializeField] private int _lives;
+	[SerializeField] private int _score;
+	[SerializeField] private int _numberShots;
 	[SerializeField] private bool _isOutofShots;
-    private Vector2 _direction;
+	private Vector2 _direction;
 
-    [Header("Damage")]
-    [SerializeField] private GameObject _damageRight;
-    [SerializeField] private GameObject _damageLeft;
+	[Header("Damage")]
+	[SerializeField] private GameObject _damageRight;
+	[SerializeField] private GameObject _damageLeft;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
@@ -38,7 +38,11 @@ public class Player : MonoBehaviour
 	[Header("Shield")]
 	[SerializeField] private bool _isShieldOn = false;
 	[SerializeField] private GameObject[] _shieldGo;
-    [SerializeField] private int _shieldNumber = 3;
+	[SerializeField] private int _shieldNumber = 3;
+
+	[Header("ExtraFire")]
+	[SerializeField] private bool _isExtraFire = false;
+    [SerializeField] private GameObject _extraFirePrefab;
 
     public static event Action OnDeath;
     public static event Action<int> OnLossingLives;
@@ -57,6 +61,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill += FireRefill;
         PowerUp.OnPlayerHit_Health += HealthRefill;
+        PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		LaserEnemy.OnPlayerDamage += Damage;
 	}
@@ -98,11 +103,7 @@ public class Player : MonoBehaviour
 	}
 
     public void Move(Vector2 move)
-	{
-        //normal speed
-        //acceleration
-        //power speed
-
+    {
         _direction = move;
 
         if (_isSpeepPowerUPActive == false && _isSpeedUP == false)
@@ -195,19 +196,31 @@ public class Player : MonoBehaviour
 		{
 			_nextFire = Time.time + _fireRate;
 
-			if (_isTripleShotActive == true)
-			{
-				Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
+			if (_isExtraFire == false)
+            {
+                Debug.Log("isExtraFire " + _isExtraFire);
+				if (_isTripleShotActive == true)
+				{
+					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
+					OnPlayerFiring?.Invoke(); //to play fire sound audioManager
+					_numberShots -= 1;
+					StartCoroutine(TripleLaserCoroutine());
+				}
+				else
+				{
+					Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+					OnPlayerFiring?.Invoke(); //to play fire sound audioManager
+					_numberShots -= 1;
+				}
+			}
+			else
+            {
+                Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
 				OnPlayerFiring?.Invoke(); //to play fire sound audioManager
 				_numberShots -= 1;
-				StartCoroutine(TripleLaserCoroutine());
+				//extra fire things
 			}
-            else
-			{
-                Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
-                OnPlayerFiring?.Invoke(); //to play fire sound audioManager
-                _numberShots -= 1;
-			}
+
         }
 	}
 
@@ -249,6 +262,18 @@ public class Player : MonoBehaviour
         }
 	}
 
+	private void ExtraFire()
+    {
+		_isExtraFire = true;
+        StartCoroutine(ExtraFireRoutine());
+    }
+
+	IEnumerator ExtraFireRoutine()
+    {
+        yield return _wait5secs;
+		_isExtraFire = false;
+    }
+
 	private void FireRefill()
     {
         _numberShots = 15;
@@ -275,6 +300,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill -= FireRefill;
         PowerUp.OnPlayerHit_Health -= HealthRefill;
+		PowerUp.OnPlayerHit_ExtraFire -= ExtraFire;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		LaserEnemy.OnPlayerDamage -= Damage;
 	}

@@ -960,6 +960,8 @@ MonoBehaviour:
   - {fileID: 1333150705}
   - {fileID: 1097589860}
   _shieldNumber: 3
+  _isExtraFire: 0
+  _extraFirePrefab: {fileID: 446453727005480891, guid: 69f39126480cb4774881def7302fbd2f, type: 3}
 --- !u!1 &443606039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2269,6 +2271,7 @@ MonoBehaviour:
   - {fileID: 3978923964131651178, guid: d547801fab3d34607971d8d58477a6c9, type: 3}
   - {fileID: 2239011248125801316, guid: 1c2298b0f34aa4c6dbaab23474abe287, type: 3}
   - {fileID: 3522135115542643486, guid: 95ecaae0f7aba497c8592fcbb8348855, type: 3}
+  - {fileID: 4709601858746124096, guid: 8356e5a70909c47aaa43903593e6e41d, type: 3}
   _numberPowerUps: 5
 --- !u!1 &1197908654
 GameObject:
