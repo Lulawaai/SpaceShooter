@@ -1114,6 +1114,8 @@ MonoBehaviour:
   _isOutofShots: 0
   _damageRight: {fileID: 1257478135}
   _damageLeft: {fileID: 443606039}
+  _damageShakeAmount: 1.01
+  _damageShakeDuration: 0.2
   _laserPrefab: {fileID: 5570246605067320359, guid: 087a2dc9f1047461691f6e8e3c2db787, type: 3}
   _tripleLaserPrefab: {fileID: 771869416058427031, guid: 280a15054ed7f44ff95a1ceffc5e3a67, type: 3}
   _laserOffset: {x: 0, y: 0.8, z: 0}
@@ -1884,6 +1886,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2016,6 +2019,18 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5071077d31e934081b0924975df5c4be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &992329532
 GameObject:
   m_ObjectHideFlags: 0
@@ -5544,12 +5559,20 @@ PrefabInstance:
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
+      propertyPath: _damageShakeAmount
+      value: 1.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
       propertyPath: _tripleLaserPrefab
       value: 
       objectReference: {fileID: 771869416058427031, guid: 280a15054ed7f44ff95a1ceffc5e3a67, type: 3}
     - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
       propertyPath: _isTripleShotActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
+      propertyPath: _damageShakeDuration
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2061592929435759069, guid: 4dfa6ab7932a44aeb85fe1ed262194b4, type: 3}
       propertyPath: _shieldGo.Array.size

@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
 	[Header("Damage")]
 	[SerializeField] private GameObject _damageRight;
 	[SerializeField] private GameObject _damageLeft;
+	[SerializeField] private float _damageShakeAmount;
+    [SerializeField] private float _damageShakeDuration;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
@@ -50,6 +52,7 @@ public class Player : MonoBehaviour
     public static event Action OnExplosion;
     public static event Action OnPowerUp;
     public static event Action OnOutofShots;
+	public static event Action<float, float> OnDamageCameraShake;
 
 	private void OnEnable()
 	{
@@ -58,7 +61,7 @@ public class Player : MonoBehaviour
 		GameInput.OnSetBackNormalSpeed += Decceleration;
 		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
-		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
+        PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill += FireRefill;
         PowerUp.OnPlayerHit_Health += HealthRefill;
         PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
@@ -159,6 +162,7 @@ public class Player : MonoBehaviour
 
 		_lives--;
 		OnExplosion?.Invoke();
+		OnDamageCameraShake?.Invoke(_damageShakeAmount, _damageShakeDuration);
 		OnLossingLives?.Invoke(_lives);
 
 		PlayerDamageUpdate();
