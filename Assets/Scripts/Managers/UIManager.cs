@@ -12,6 +12,9 @@ public class UIManager : MonoBehaviour
 	[SerializeField] private float _timeGameOverFlicker;
 	[SerializeField] private bool _mobileDevice = true;
 
+	[SerializeField] private GameObject[] _laserAvailable;
+    [SerializeField] private int _nrLaser = 14;
+
 	[Header("ButtonsUI")]
 	[SerializeField] private TMP_Text _gameOverText;
 	[SerializeField] private TMP_Text _restartText;
@@ -32,6 +35,8 @@ public class UIManager : MonoBehaviour
 		Enemy.OnEnemyDeathLaser += UpdateScore;
 		Player.OnLossingLives += UpdateLives;
         Player.OnDeath += PlayerDeath;
+		Player.OnPlayerFiring += FireRemoving;
+        PowerUp.OnPlayerHit_FireRefill += FireAdding;
 	}
 
 	void Start()
@@ -94,8 +99,28 @@ public class UIManager : MonoBehaviour
 			_joyStick.SetActive(false);
 			_fireOnscreenButton.SetActive(false);
 		}
-
 	}
+
+	private void FireRemoving(int nrFire)
+    {
+        _nrLaser = nrFire;
+		if (_nrLaser > -1 )
+        {
+            _laserAvailable[_nrLaser].SetActive(false);
+        }
+    }
+
+    private void FireAdding()
+    {
+
+        Debug.Log("calling player refillin UI");
+		int i = 0;
+        while (i < 15)
+        {
+			_laserAvailable[i].SetActive(true);
+			i++;
+        }
+    }
 
     private void GameOverSteps()
 	{
@@ -143,5 +168,7 @@ public class UIManager : MonoBehaviour
 		Enemy.OnEnemyDeathLaser -= UpdateScore;
 		Player.OnLossingLives -= UpdateLives;
 		Player.OnDeath -= PlayerDeath;
+        Player.OnPlayerFiring -= FireRemoving;
+        PowerUp.OnPlayerHit_FireRefill -= FireAdding;
 	}
 }

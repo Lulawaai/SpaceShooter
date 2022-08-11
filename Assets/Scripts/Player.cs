@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
 
     public static event Action OnDeath;
     public static event Action<int> OnLossingLives;
-    public static event Action OnPlayerFiring;
+    public static event Action<int> OnPlayerFiring;
     public static event Action OnExplosion;
     public static event Action OnPowerUp;
     public static event Action OnOutofShots;
@@ -202,23 +202,22 @@ public class Player : MonoBehaviour
 				if (_isTripleShotActive == true)
 				{
 					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
-					OnPlayerFiring?.Invoke(); //to play fire sound audioManager
-					_numberShots -= 1;
+                    _numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 					StartCoroutine(TripleLaserCoroutine());
 				}
 				else
 				{
 					Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
-					OnPlayerFiring?.Invoke(); //to play fire sound audioManager
 					_numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 				}
 			}
 			else
             {
                 Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
-				OnPlayerFiring?.Invoke(); //to play fire sound audioManager
 				_numberShots -= 1;
-				//extra fire things
+				OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 			}
 
         }

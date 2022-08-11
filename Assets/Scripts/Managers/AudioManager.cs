@@ -37,7 +37,7 @@ public class AudioManager : MonoBehaviour
 		_backgroundMusicAudioS.Stop();
 	}
 
-	private void PlayLaserSound()
+	private void PlayLaserSound(int nrLaser)
 	{
 		_laserAudioS.Play();
 	}

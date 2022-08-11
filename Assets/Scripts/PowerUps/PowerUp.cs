@@ -50,10 +50,10 @@ public class PowerUp : MonoBehaviour
 					OnPlayerHit_FireRefill?.Invoke();
                     break;
                 case 4:
-                    OnPlayerHit_Health?.Invoke(); //Player & UIManager
+                    OnPlayerHit_Health?.Invoke(); //Player && UIManager
                     break;
                 case 5:
-                    OnPlayerHit_ExtraFire?.Invoke();
+                    OnPlayerHit_ExtraFire?.Invoke();  //Player && UIManager
                     break;
                 default:
 					Debug.Log("default case");
