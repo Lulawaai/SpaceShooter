@@ -11,9 +11,13 @@ public class Enemy : MonoBehaviour
 
 	[SerializeField] private float _enemyExploTime;
 
-	[SerializeField] private GameObject _laserEnemyPrefab;
+	[SerializeField] private GameObject _laserVerticalEnemyPrefab;
+    [SerializeField] private GameObject _laserHorizontalEnemyPrefab;
 
-	private Vector3 _offsetLaser;
+    [SerializeField] private int _typeMovement;
+
+	private Vector3 _offsetLaserVert;
+	private Vector3 _offsetLaserHoriz;
 
 	private bool _playerAlive;
 	private bool _isThisEnemyAlive;
@@ -28,22 +32,23 @@ public class Enemy : MonoBehaviour
 	}
 	private void Start()
 	{
-		float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
-		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+		SpawnPosition();
 
-		transform.position = spawnPos;
 		_playerAlive = true;
 		_isThisEnemyAlive = true;
 
-		_offsetLaser = new Vector3(0, -1.08f, 0);
+		_offsetLaserVert = new Vector3(0, -1.08f, 0);
+        _offsetLaserHoriz = new Vector3(0.7f, 0, 0);
 
 		StartCoroutine(FireEnemyRoutine());
 	}
 
 	void Update()
     {
-		Movement();
-
+		if (_playerAlive == true)
+        {
+			Movement();
+		}
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -67,18 +72,49 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	private void Movement()
-	{
-		if (_playerAlive == true)
+    private void SpawnPosition()
+    {
+		_typeMovement = UnityEngine.Random.Range(0, 2);
+
+		float randomX;
+		float ramdomY;
+		Vector3 spawnPos;
+
+		switch (_typeMovement)
 		{
+			case 0: //vertical movement
+				randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
+				spawnPos = new Vector3(randomX, 7.0f, 0);
+				transform.position = spawnPos;
+				break;
+			case 1: //horizontal movement
+				ramdomY = UnityEngine.Random.Range(-1.19f, 5.5f);
+				spawnPos = new Vector3(-11.15f, ramdomY, 0);
+				transform.position = spawnPos;
+				break;
+		}
+	}
+
+	private void Movement()
+    {
+		if (_typeMovement == 0)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
 			transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
 			if (transform.position.y < -5.5f && _isThisEnemyAlive == true)
 			{
-				float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
-				Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+				SpawnPosition();
+            }
+		}
+		else if (_typeMovement == 1)
+        {
+			transform.rotation = Quaternion.Euler(0, 0, 90);
+			transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-				transform.position = spawnPos;
+			if (transform.position.x > 11.24 && _isThisEnemyAlive == true)
+            {
+                SpawnPosition();
 			}
 		}
 	}
@@ -101,10 +137,19 @@ public class Enemy : MonoBehaviour
 		while (_isThisEnemyAlive == true)
 		{
 			float _wait = UnityEngine.Random.Range(0, 7);
-			yield return new WaitForSeconds(_wait);
-			Instantiate(_laserEnemyPrefab, transform.position + _offsetLaser, Quaternion.identity);
-		}
 
+			yield return new WaitForSeconds(_wait);
+
+			switch (_typeMovement)
+            {
+				case 0:
+					Instantiate(_laserVerticalEnemyPrefab, transform.position + _offsetLaserVert, Quaternion.identity);
+                    break;
+				case 1:
+                    Instantiate(_laserHorizontalEnemyPrefab, transform.position + _offsetLaserHoriz, transform.rotation * Quaternion.identity);
+					break;
+            }
+		}
 	}
 
 	private void OnDisable()

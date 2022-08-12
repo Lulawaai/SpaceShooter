@@ -9,11 +9,6 @@ public class LaserEnemy : MonoBehaviour
 
     public static event Action OnPlayerDamage;
 
-    void Start()
-    {
-        
-    }
-
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);

@@ -67,6 +67,7 @@ public class Player : MonoBehaviour
         PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		LaserEnemy.OnPlayerDamage += Damage;
+        LaserEnemyHori.OnPlayerDamage += Damage;
 	}
 
 	private void Start()
@@ -162,7 +163,7 @@ public class Player : MonoBehaviour
 
 		_lives--;
 		OnExplosion?.Invoke();
-		OnDamageCameraShake?.Invoke(_damageShakeAmount, _damageShakeDuration);
+        OnDamageCameraShake?.Invoke(_damageShakeAmount, _damageShakeDuration);
 		OnLossingLives?.Invoke(_lives);
 
 		PlayerDamageUpdate();
@@ -306,5 +307,6 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_ExtraFire -= ExtraFire;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		LaserEnemy.OnPlayerDamage -= Damage;
+        LaserEnemyHori.OnPlayerDamage -= Damage;
 	}
 }
