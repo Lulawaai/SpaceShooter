@@ -13,6 +13,11 @@ public class SpawnManager : MonoBehaviour
 	[Header("Enemies")]
 	[SerializeField] private GameObject _enemyPrefab;
 	[SerializeField] private GameObject _enemyContainer;
+	[SerializeField] private int _nrEmenies;
+	[SerializeField] private int _nrEmeniesActive;
+	[SerializeField] private int _waveNr;
+	[SerializeField] private int _timeBetWave;
+
 
 	[Header("Power UPs")]
 	[SerializeField] private GameObject _powerUpContainer;
@@ -28,6 +33,7 @@ public class SpawnManager : MonoBehaviour
 	void Start()
 	{
 		_waitEnemyTime = new WaitForSeconds(_enemyTimeSpawn);
+		_nrEmeniesActive = _nrEmenies;
 	}
 
 	private void PlayerDead()
@@ -37,20 +43,37 @@ public class SpawnManager : MonoBehaviour
 
 	private void StartSpawning()
 	{
-		StartCoroutine(SpawnEnemiesRoutine());
+		StartCoroutine(StartSpawningRoutine());
 		StartCoroutine(SpawnPowerUPRoutine());
         StartCoroutine(ExtraFireRoutine());
 	}
 
+	//numero de enemigos 
+	//
+
+	IEnumerator StartSpawningRoutine()
+    {
+        yield return _wait2Secs;
+        StartCoroutine(SpawnEnemiesRoutine());
+	}
+
 	IEnumerator SpawnEnemiesRoutine()
 	{
-		yield return _wait2Secs;
-		while (_playerAlive == true)
+        Debug.Log("wave number = " + _waveNr);
+		while (_playerAlive == true && _nrEmeniesActive > 0)
 		{
+			_nrEmeniesActive--;
 			GameObject newEnemy = Instantiate(_enemyPrefab);
 			newEnemy.transform.parent = _enemyContainer.transform;
 			yield return _waitEnemyTime;
 		}
+      
+		_waveNr++;
+        _nrEmenies = _nrEmenies + 2;
+		_nrEmeniesActive = _nrEmenies;
+		yield return new WaitForSeconds(_timeBetWave);
+        StartCoroutine(SpawnEnemiesRoutine());
+
 	}
 
 	IEnumerator SpawnPowerUPRoutine()
