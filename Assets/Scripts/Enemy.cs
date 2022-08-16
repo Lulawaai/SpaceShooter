@@ -134,7 +134,7 @@ public class Enemy : MonoBehaviour
 
 	IEnumerator FireEnemyRoutine()
 	{
-		while (_isThisEnemyAlive == true)
+        while (_isThisEnemyAlive == true && _playerAlive)
 		{
 			float _wait = UnityEngine.Random.Range(0, 7);
 

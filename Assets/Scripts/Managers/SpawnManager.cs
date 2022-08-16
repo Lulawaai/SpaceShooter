@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class SpawnManager : MonoBehaviour
 {
@@ -17,12 +18,15 @@ public class SpawnManager : MonoBehaviour
 	[SerializeField] private int _nrEmeniesActive;
 	[SerializeField] private int _waveNr;
 	[SerializeField] private int _timeBetWave;
+	[SerializeField] private int _numberExtraEnemies;
 
 
 	[Header("Power UPs")]
 	[SerializeField] private GameObject _powerUpContainer;
 	[SerializeField] private GameObject[] _powerUPPrefab;
     [SerializeField] private int _numberPowerUps;
+
+    public static event Action<int> OnUpdatingWaveNr;
 
 	private void OnEnable()
 	{
@@ -48,9 +52,6 @@ public class SpawnManager : MonoBehaviour
         StartCoroutine(ExtraFireRoutine());
 	}
 
-	//numero de enemigos 
-	//
-
 	IEnumerator StartSpawningRoutine()
     {
         yield return _wait2Secs;
@@ -59,7 +60,6 @@ public class SpawnManager : MonoBehaviour
 
 	IEnumerator SpawnEnemiesRoutine()
 	{
-        Debug.Log("wave number = " + _waveNr);
 		while (_playerAlive == true && _nrEmeniesActive > 0)
 		{
 			_nrEmeniesActive--;
@@ -67,12 +67,13 @@ public class SpawnManager : MonoBehaviour
 			newEnemy.transform.parent = _enemyContainer.transform;
 			yield return _waitEnemyTime;
 		}
-      
-		_waveNr++;
-        _nrEmenies = _nrEmenies + 2;
+     
+        _nrEmenies = _nrEmenies + _numberExtraEnemies;
 		_nrEmeniesActive = _nrEmenies;
 		yield return new WaitForSeconds(_timeBetWave);
-        StartCoroutine(SpawnEnemiesRoutine());
+		_waveNr++;
+        OnUpdatingWaveNr?.Invoke(_waveNr);
+		StartCoroutine(SpawnEnemiesRoutine());
 
 	}
 
@@ -81,10 +82,10 @@ public class SpawnManager : MonoBehaviour
 		yield return _wait2Secs;
 		while (_playerAlive == true)
 		{
-            int randomPowerUP = Random.Range(0, _numberPowerUps);
+            int randomPowerUP = UnityEngine.Random.Range(0, _numberPowerUps);
             GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
             newPower.transform.parent = _powerUpContainer.transform;
-            yield return new WaitForSeconds(Random.Range(0f, 3f));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 3f));
 		}
 	}
 
@@ -93,7 +94,7 @@ public class SpawnManager : MonoBehaviour
         yield return _wait2Secs;
 		if (_playerAlive == true)
         {
-			yield return new WaitForSeconds(Random.Range(4f, 6f));
+			yield return new WaitForSeconds(UnityEngine.Random.Range(4f, 6f));
             GameObject firePower = Instantiate(_powerUPPrefab[5]);
             firePower.transform.parent = _powerUpContainer.transform;
 		}

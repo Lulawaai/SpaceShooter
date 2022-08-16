@@ -7,10 +7,12 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
 	[SerializeField] private TMP_Text _scoreText;
+	[SerializeField] private TMP_Text _waveText;
 	[SerializeField] private Sprite[] _lives;
 	[SerializeField] private Image _livesImage;
 	[SerializeField] private float _timeGameOverFlicker;
 	[SerializeField] private bool _mobileDevice = true;
+	private int _waveNr;
 
 	[SerializeField] private GameObject[] _laserAvailable;
     [SerializeField] private int _nrLaser = 14;
@@ -37,6 +39,7 @@ public class UIManager : MonoBehaviour
         Player.OnDeath += PlayerDeath;
 		Player.OnPlayerFiring += FireRemoving;
         PowerUp.OnPlayerHit_FireRefill += FireAdding;
+        SpawnManager.OnUpdatingWaveNr += UpdateWaveNr;
 	}
 
 	void Start()
@@ -56,8 +59,13 @@ public class UIManager : MonoBehaviour
 		_scoreText.text = "Score: " + _score.ToString();
 	}
 
+	private void UpdateWaveNr(int waveNr)
+    {
+        _waveText.text = "Wave nr: " + waveNr.ToString();
+    }
+
 	private void UpdateLives(int lives)
-	{
+    {
 		switch(lives)
 		{
 			case 0:
@@ -170,5 +178,6 @@ public class UIManager : MonoBehaviour
 		Player.OnDeath -= PlayerDeath;
         Player.OnPlayerFiring -= FireRemoving;
         PowerUp.OnPlayerHit_FireRefill -= FireAdding;
-	}
+		SpawnManager.OnUpdatingWaveNr -= UpdateWaveNr;
+    }
 }
