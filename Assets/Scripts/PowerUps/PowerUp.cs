@@ -7,7 +7,7 @@ public class PowerUp : MonoBehaviour
 {
 	[SerializeField] private float _speed = 3.0f;
 
-	[Header("5-ExtraFire")]
+	[Header("5-ExtraFire, 6-Slow")]
 	[Header("0-TripleLaser, 1-Speed, 2-Shield, 3-Fire, 4-Health")]
 	[SerializeField] int _powerUpID;
 
@@ -17,6 +17,7 @@ public class PowerUp : MonoBehaviour
 	public static event Action OnPlayerHit_FireRefill;
     public static event Action OnPlayerHit_Health;
     public static event Action OnPlayerHit_ExtraFire;
+	public static event Action OnPlayerHit_Slow;
 
     private void Start()
     {
@@ -55,6 +56,9 @@ public class PowerUp : MonoBehaviour
                 case 5:
                     OnPlayerHit_ExtraFire?.Invoke();  //Player && UIManager
                     break;
+				case 6:
+					OnPlayerHit_Slow?.Invoke();  //Player
+					break;
                 default:
 					Debug.Log("default case");
 					break;

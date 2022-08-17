@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
 	[Header("Basic Player")]
 	[SerializeField] private bool _isAlive;
 	[SerializeField] private float _speed;
-	[SerializeField] private bool _isSpeedUP = false;
 	[SerializeField] private float _normalSpeed;
 	[SerializeField] private float _acceleration;
 	[SerializeField] private int _lives;
@@ -21,7 +20,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private GameObject _damageRight;
 	[SerializeField] private GameObject _damageLeft;
 	[SerializeField] private float _damageShakeAmount;
-    [SerializeField] private float _damageShakeDuration;
+	[SerializeField] private float _damageShakeDuration;
 
 	[Header("Laser")]
 	[SerializeField] private Transform _laserPrefab;
@@ -32,6 +31,9 @@ public class Player : MonoBehaviour
 	[SerializeField] private bool _isTripleShotActive = false;
 	private float _nextFire;
 	private WaitForSeconds _wait5secs = new WaitForSeconds(5.0f);
+
+    //
+    private int _speedSituations = 0;
 
 	[Header("Speed")]
 	[SerializeField] private float _speedPowerUP;
@@ -46,7 +48,11 @@ public class Player : MonoBehaviour
 	[SerializeField] private bool _isExtraFire = false;
     [SerializeField] private GameObject _extraFirePrefab;
 
-    public static event Action OnDeath;
+    [Header("Slow")]
+	[SerializeField] private float _speedSlow;
+	private WaitForSeconds _wait3secs = new WaitForSeconds(3.0f);
+
+	public static event Action OnDeath;
     public static event Action<int> OnLossingLives;
     public static event Action<int> OnPlayerFiring;
     public static event Action OnExplosion;
@@ -65,6 +71,7 @@ public class Player : MonoBehaviour
         PowerUp.OnPlayerHit_FireRefill += FireRefill;
         PowerUp.OnPlayerHit_Health += HealthRefill;
         PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
+		PowerUp.OnPlayerHit_Slow += SlowDown;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		LaserEnemy.OnPlayerDamage += Damage;
         LaserEnemyHori.OnPlayerDamage += Damage;
@@ -110,39 +117,60 @@ public class Player : MonoBehaviour
     {
         _direction = move;
 
-        if (_isSpeepPowerUPActive == false && _isSpeedUP == false)
-		{
-            _speed = _normalSpeed;
-        }
+		//_speedSituations
+		//normal = 0
+		//SpeedUP = 1
+		//Acceleration = 2
+		//Slow = 3
 
-        if (_isSpeepPowerUPActive == true && _isSpeedUP == false)
+		switch(_speedSituations)
         {
-            _speed = _speedPowerUP;
-            StartCoroutine(SpeedUPRoutine());
-        }
+			case 0:
+				_speed = _normalSpeed;
+				break;
+			case 1:
+				_speed = _speedPowerUP;
+				StartCoroutine(SpeedUPRoutine());
+				break;
+            case 2:
+                _speed += _acceleration;
+                if (_speed > 30)
+                {
+                    _speed = 30;
+                }
+                break;
+            case 3:
+                _speed = _speedSlow;
+                break;
+			default:
+				Debug.Log("Player::: Speed situation default case");
+				break;
+		}
 
-        if (_isSpeedUP == true)
-        {
-            _speed += _acceleration;
-
-			if (_speed > 30)
-            {
-                _speed = 30;
-            }
-        }
-
-		transform.Translate(_direction * _speed * Time.deltaTime);
+        transform.Translate(_direction * _speed * Time.deltaTime);
 	}
 
 	private void Acceleration()
 	{
-        _isSpeedUP = true;
+        _speedSituations = 2;
 	}
 
 	private void Decceleration()
 	{
-		_isSpeedUP = false;
+        _speedSituations = 0;
 	}
+
+	private void SlowDown()
+    {
+        _speedSituations = 3;
+        StartCoroutine(SlowBackRoutine());
+    }
+
+	IEnumerator SlowBackRoutine()
+    {
+		yield return _wait3secs;
+		_speedSituations = 0;
+    }
 
     #endregion
 
@@ -244,12 +272,14 @@ public class Player : MonoBehaviour
 	private void SpeedPowerUP()
 	{
 		_isSpeepPowerUPActive = true;
+		_speedSituations = 1;
 		OnPowerUp?.Invoke();
 	}
 
 	IEnumerator SpeedUPRoutine()
 	{
 		yield return _wait5secs;
+        _speedSituations = 0;
 		_isSpeepPowerUPActive = false;
 	}
 
@@ -305,6 +335,7 @@ public class Player : MonoBehaviour
         PowerUp.OnPlayerHit_FireRefill -= FireRefill;
         PowerUp.OnPlayerHit_Health -= HealthRefill;
 		PowerUp.OnPlayerHit_ExtraFire -= ExtraFire;
+		PowerUp.OnPlayerHit_Slow -= SlowDown;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		LaserEnemy.OnPlayerDamage -= Damage;
         LaserEnemyHori.OnPlayerDamage -= Damage;
