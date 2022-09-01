@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour
 	[SerializeField] private GameObject _fireOnscreenButton;
 	[SerializeField] private GameObject _mobileOption;
 	[SerializeField] private GameObject _desktopOption;
+	[SerializeField] private GameObject _PlayerWonLeveltxt;
 
 	private WaitForSeconds _waitFlicker;
 
@@ -35,6 +36,8 @@ public class UIManager : MonoBehaviour
 	private void OnEnable()
 	{
 		Enemy.OnEnemyDeathLaser += UpdateScore;
+		BigEnemy.OnEnemyDeadScore += UpdateScore;
+		BigEnemy.OnBigEnemyDead += PlayerWonLevel;
 		Player.OnLossingLives += UpdateLives;
         Player.OnDeath += PlayerDeath;
 		Player.OnPlayerFiring += FireRemoving;
@@ -138,6 +141,15 @@ public class UIManager : MonoBehaviour
 		_fireOnscreenButton.SetActive(false);
 	}
 
+	private void PlayerWonLevel()
+	{
+		_PlayerWonLeveltxt.SetActive(true);
+		_restartText.gameObject.SetActive(true);
+		_restartButton.SetActive(true);
+		_joyStick.SetActive(false);
+		_fireOnscreenButton.SetActive(false);
+	}
+
 	IEnumerator GameoverFlickerRoutine()
 	{
 		while (_isPlayerAlive == false)
@@ -179,5 +191,7 @@ public class UIManager : MonoBehaviour
         Player.OnPlayerFiring -= FireRemoving;
         PowerUp.OnPlayerHit_FireRefill -= FireAdding;
 		SpawnManager.OnUpdatingWaveNr -= UpdateWaveNr;
-    }
+		BigEnemy.OnEnemyDeadScore -= UpdateScore;
+		BigEnemy.OnBigEnemyDead -= PlayerWonLevel;
+	}
 }

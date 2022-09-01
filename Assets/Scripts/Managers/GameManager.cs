@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 		Player.OnDeath += GameOver;
 		GameInput.OnRestartGame += RestartGame;
 		GameInput.OnQuitGame += QuitGame;
+		BigEnemy.OnBigEnemyDead += GameOver;
 	}
 
 	public void QuitGame()
@@ -41,5 +42,6 @@ public class GameManager : MonoBehaviour
 		Player.OnDeath -= GameOver;
 		GameInput.OnRestartGame -= RestartGame;
 		GameInput.OnQuitGame -= QuitGame;
+		BigEnemy.OnBigEnemyDead -= GameOver;
 	}
 }

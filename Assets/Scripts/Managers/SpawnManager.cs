@@ -14,6 +14,7 @@ public class SpawnManager : MonoBehaviour
 	[Header("Enemies")]
 	[SerializeField] private GameObject _enemyPrefab;
 	[SerializeField] private GameObject _enemyContainer;
+	[SerializeField] private GameObject _bigEnemy;
 	[SerializeField] private int _nrEmenies;
 	[SerializeField] private int _nrEmeniesActive;
 	[SerializeField] private int _waveNr;
@@ -26,7 +27,7 @@ public class SpawnManager : MonoBehaviour
 	[SerializeField] private GameObject[] _powerUPPrefab;
     [SerializeField] private int _numberPowerUps;
 
-    public static event Action<int> OnUpdatingWaveNr;
+	public static event Action<int> OnUpdatingWaveNr;
 
 	private void OnEnable()
 	{
@@ -73,7 +74,13 @@ public class SpawnManager : MonoBehaviour
 		yield return new WaitForSeconds(_timeBetWave);
 		_waveNr++;
         OnUpdatingWaveNr?.Invoke(_waveNr);
-		StartCoroutine(SpawnEnemiesRoutine());
+
+		if (_waveNr < 4)
+		{
+			StartCoroutine(SpawnEnemiesRoutine());
+		}
+
+		Instantiate(_bigEnemy);
 
 	}
 

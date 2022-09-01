@@ -97,8 +97,8 @@ public class Player : MonoBehaviour
         }
 	}
 
-    #region PlayerMove
-    private void ClampPlayerMove()
+	#region PlayerMove
+	private void ClampPlayerMove()
 	{
 		transform.position = new Vector2(transform.position.x, Mathf.Clamp(transform.position.y, -3.5f, 1));
 

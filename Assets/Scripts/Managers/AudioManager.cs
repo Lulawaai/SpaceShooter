@@ -20,6 +20,8 @@ public class AudioManager : MonoBehaviour
 		Asteroid.OnAsteroidDestroyed += PlayExplosionSound;
 		Asteroid.OnAsteroidDestroyed += PlayBackgroundMusic;
 		Enemy.OnEnemyDeathPlaySound += PlayExplosionSound;
+		BigEnemy.OnBigEnemyDead += PlayExplosionSound;
+		BigEnemy.OnbigEnemyExplosion += PlayExplosionSound;
 	}
 
 	private void PlayNoMoreAmmo()
@@ -62,5 +64,7 @@ public class AudioManager : MonoBehaviour
 		Asteroid.OnAsteroidDestroyed -= PlayExplosionSound;
 		Asteroid.OnAsteroidDestroyed -= PlayBackgroundMusic;
 		Enemy.OnEnemyDeathPlaySound -= PlayExplosionSound;
+		BigEnemy.OnBigEnemyDead -= PlayExplosionSound;
+		BigEnemy.OnbigEnemyExplosion -= PlayExplosionSound;
 	}
 }

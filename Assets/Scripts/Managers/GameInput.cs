@@ -38,6 +38,7 @@ public class GameInput : MonoBehaviour
 
 	private void RestartGame_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
 	{
+		Debug.Log("rpresedde");
 		OnRestartGame?.Invoke();
 	}
 
