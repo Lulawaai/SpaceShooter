@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private int _numberShots;
 	[SerializeField] private bool _isOutofShots;
 	private Vector2 _direction;
+	private bool _gameOver;
 
 	[Header("Damage")]
 	[SerializeField] private GameObject _damageRight;
@@ -73,6 +74,7 @@ public class Player : MonoBehaviour
         PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
 		PowerUp.OnPlayerHit_Slow += SlowDown;
 		Enemy.OnEnemyDeathPlayer += Damage;
+		BigEnemy.OnBigEnemyDead += GameOver;
 		LaserEnemy.OnPlayerDamage += Damage;
         LaserEnemyHori.OnPlayerDamage += Damage;
 	}
@@ -81,6 +83,7 @@ public class Player : MonoBehaviour
 	{
 		_speed = _normalSpeed;
 		_isAlive = true;
+		_gameOver = false;
 		_lives = 3;
 		_damageRight.SetActive(false);
 		_damageLeft.SetActive(false);
@@ -115,39 +118,43 @@ public class Player : MonoBehaviour
 
     public void Move(Vector2 move)
     {
-        _direction = move;
+		if (_gameOver == false)
+		{
+			_direction = move;
 
-		//_speedSituations
-		//normal = 0
-		//SpeedUP = 1
-		//Acceleration = 2
-		//Slow = 3
+			//_speedSituations
+			//normal = 0
+			//SpeedUP = 1
+			//Acceleration = 2
+			//Slow = 3
 
-		switch(_speedSituations)
-        {
-			case 0:
-				_speed = _normalSpeed;
-				break;
-			case 1:
-				_speed = _speedPowerUP;
-				StartCoroutine(SpeedUPRoutine());
-				break;
-            case 2:
-                _speed += _acceleration;
-                if (_speed > 30)
-                {
-                    _speed = 30;
-                }
-                break;
-            case 3:
-                _speed = _speedSlow;
-                break;
-			default:
-				Debug.Log("Player::: Speed situation default case");
-				break;
+			switch (_speedSituations)
+			{
+				case 0:
+					_speed = _normalSpeed;
+					break;
+				case 1:
+					_speed = _speedPowerUP;
+					StartCoroutine(SpeedUPRoutine());
+					break;
+				case 2:
+					_speed += _acceleration;
+					if (_speed > 30)
+					{
+						_speed = 30;
+					}
+					break;
+				case 3:
+					_speed = _speedSlow;
+					break;
+				default:
+					Debug.Log("Player::: Speed situation default case");
+					break;
+			}
+
+			transform.Translate(_direction * _speed * Time.deltaTime);
 		}
 
-        transform.Translate(_direction * _speed * Time.deltaTime);
 	}
 
 	private void Acceleration()
@@ -225,13 +232,12 @@ public class Player : MonoBehaviour
 
     private void Fire()
 	{
-        if (Time.time > _nextFire && _numberShots > 0)
+		if (Time.time > _nextFire && _numberShots > 0 && _gameOver == false)
 		{
 			_nextFire = Time.time + _fireRate;
 
 			if (_isExtraFire == false)
             {
-                Debug.Log("isExtraFire " + _isExtraFire);
 				if (_isTripleShotActive == true)
 				{
 					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
@@ -323,7 +329,12 @@ public class Player : MonoBehaviour
 		}
     }
 	#endregion
-	  
+
+	private void GameOver()
+	{
+		_gameOver = true;
+	}
+
 	private void OnDisable()
 	{
 		GameInput.OnFire -= Fire;
@@ -337,6 +348,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_ExtraFire -= ExtraFire;
 		PowerUp.OnPlayerHit_Slow -= SlowDown;
 		Enemy.OnEnemyDeathPlayer -= Damage;
+		BigEnemy.OnBigEnemyDead -= GameOver;
 		LaserEnemy.OnPlayerDamage -= Damage;
         LaserEnemyHori.OnPlayerDamage -= Damage;
 	}

@@ -123,8 +123,6 @@ public class UIManager : MonoBehaviour
 
     private void FireAdding()
     {
-
-        Debug.Log("calling player refillin UI");
 		int i = 0;
         while (i < 15)
         {

@@ -9,7 +9,7 @@ public class SpawnManager : MonoBehaviour
 	private WaitForSeconds _waitEnemyTime;
 	private WaitForSeconds _wait2Secs = new WaitForSeconds(2.0f);
 
-	[SerializeField] private bool _playerAlive = true;
+	[SerializeField] private bool _gameRunning = true;
 
 	[Header("Enemies")]
 	[SerializeField] private GameObject _enemyPrefab;
@@ -25,13 +25,14 @@ public class SpawnManager : MonoBehaviour
 	[Header("Power UPs")]
 	[SerializeField] private GameObject _powerUpContainer;
 	[SerializeField] private GameObject[] _powerUPPrefab;
-    [SerializeField] private int _numberPowerUps;
+	[SerializeField] private GameObject[] _powerHealthFirePrefab;
 
 	public static event Action<int> OnUpdatingWaveNr;
 
 	private void OnEnable()
 	{
-		Player.OnDeath += PlayerDead;
+		Player.OnDeath += GameOver;
+		BigEnemy.OnBigEnemyDead += GameOver;
 		Asteroid.OnAsteroidDestroyed += StartSpawning;
 	}
 
@@ -41,16 +42,19 @@ public class SpawnManager : MonoBehaviour
 		_nrEmeniesActive = _nrEmenies;
 	}
 
-	private void PlayerDead()
+	private void GameOver()
 	{
-		_playerAlive = false;
+		_gameRunning = false;
 	}
 
 	private void StartSpawning()
 	{
 		StartCoroutine(StartSpawningRoutine());
+
 		StartCoroutine(SpawnPowerUPRoutine());
-        StartCoroutine(ExtraFireRoutine());
+		StartCoroutine(SpawnHealtAndFireRoutine());
+
+		StartCoroutine(ExtraFireRoutine());
 	}
 
 	IEnumerator StartSpawningRoutine()
@@ -61,7 +65,7 @@ public class SpawnManager : MonoBehaviour
 
 	IEnumerator SpawnEnemiesRoutine()
 	{
-		while (_playerAlive == true && _nrEmeniesActive > 0)
+		while (_gameRunning == true && _nrEmeniesActive > 0)
 		{
 			_nrEmeniesActive--;
 			GameObject newEnemy = Instantiate(_enemyPrefab);
@@ -75,42 +79,54 @@ public class SpawnManager : MonoBehaviour
 		_waveNr++;
         OnUpdatingWaveNr?.Invoke(_waveNr);
 
-		if (_waveNr < 4)
+		if (_waveNr < 2)
 		{
 			StartCoroutine(SpawnEnemiesRoutine());
 		}
-
-		Instantiate(_bigEnemy);
-
+		else
+			Instantiate(_bigEnemy);
 	}
 
 	IEnumerator SpawnPowerUPRoutine()
 	{
 		yield return _wait2Secs;
-		while (_playerAlive == true)
+		while (_gameRunning == true)
 		{
-            int randomPowerUP = UnityEngine.Random.Range(0, _numberPowerUps);
+			int randomPowerUP = UnityEngine.Random.Range(0, _powerUPPrefab.Length);
             GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
             newPower.transform.parent = _powerUpContainer.transform;
-            yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 3f));
+            yield return new WaitForSeconds(UnityEngine.Random.Range(2f, 5f));
+		}
+	}
+
+	IEnumerator SpawnHealtAndFireRoutine()
+	{
+		yield return _wait2Secs;
+
+		while (_gameRunning == true)
+		{
+			int randomPowerUP = UnityEngine.Random.Range(0, _powerHealthFirePrefab.Length);
+			GameObject newPower = Instantiate(_powerHealthFirePrefab[randomPowerUP]);
+			newPower.transform.parent = _powerUpContainer.transform;
+			yield return new WaitForSeconds(UnityEngine.Random.Range(0, 3f));
 		}
 	}
 
 	IEnumerator ExtraFireRoutine()
     {
         yield return _wait2Secs;
-		if (_playerAlive == true)
+		if (_gameRunning == true)
         {
-			yield return new WaitForSeconds(UnityEngine.Random.Range(4f, 6f));
-            GameObject firePower = Instantiate(_powerUPPrefab[5]);
+			yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 6f));
+			GameObject firePower = Instantiate(_powerUPPrefab[2]);
             firePower.transform.parent = _powerUpContainer.transform;
 		}
-
     }
 
 	private void OnDisable()
 	{
-		Player.OnDeath -= PlayerDead;
+		Player.OnDeath -= GameOver;
+		BigEnemy.OnBigEnemyDead -= GameOver;
 		Asteroid.OnAsteroidDestroyed -= StartSpawning;
 	}
 }

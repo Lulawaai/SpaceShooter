@@ -204,7 +204,7 @@ MonoBehaviour:
   _lives: 5
   _isAlive: 0
   _scoreEnemyKilling: 0
-  _smallExploOffset: {x: 0, y: 2, z: 0}
+  _smallExploOffset: {x: 0, y: 5, z: 0}
   _laserPrefab: {fileID: 4837558445738069599, guid: 7f09aa2103e144344811332dfa792e1b, type: 3}
   _explosionPrefab: {fileID: 992446767}
   _rend: {fileID: 9152570388868798590}

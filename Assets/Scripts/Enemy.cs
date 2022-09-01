@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
 	private Vector3 _offsetLaserVert;
 	private Vector3 _offsetLaserHoriz;
 
-	private bool _playerAlive;
+	private bool _gamePlaying;
 	private bool _isThisEnemyAlive;
 
 	public static event Action<int> OnEnemyDeathLaser;
@@ -28,13 +28,14 @@ public class Enemy : MonoBehaviour
 
 	private void OnEnable()
 	{
-		Player.OnDeath += PlayerDeath;
+		Player.OnDeath += GameOver;
+		BigEnemy.OnBigEnemyDead += GameOver;
 	}
 	private void Start()
 	{
 		SpawnPosition();
 
-		_playerAlive = true;
+		_gamePlaying = true;
 		_isThisEnemyAlive = true;
 
 		_offsetLaserVert = new Vector3(0, -1.08f, 0);
@@ -45,7 +46,7 @@ public class Enemy : MonoBehaviour
 
 	void Update()
     {
-		if (_playerAlive == true)
+		if (_gamePlaying == true)
         {
 			Movement();
 		}
@@ -119,9 +120,9 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	private void PlayerDeath()
+	private void GameOver()
 	{
-		_playerAlive = false;
+		_gamePlaying = false;
 	}
 
 	private void EnemyDeath()
@@ -134,7 +135,7 @@ public class Enemy : MonoBehaviour
 
 	IEnumerator FireEnemyRoutine()
 	{
-        while (_isThisEnemyAlive == true && _playerAlive)
+        while (_isThisEnemyAlive == true && _gamePlaying)
 		{
 			float _wait = UnityEngine.Random.Range(0, 7);
 
@@ -154,6 +155,7 @@ public class Enemy : MonoBehaviour
 
 	private void OnDisable()
 	{
-		Player.OnDeath -= PlayerDeath;
+		Player.OnDeath -= GameOver;
+		BigEnemy.OnBigEnemyDead -= GameOver;
 	}
 }
