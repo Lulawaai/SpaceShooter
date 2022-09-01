@@ -79,7 +79,7 @@ public class SpawnManager : MonoBehaviour
 		_waveNr++;
         OnUpdatingWaveNr?.Invoke(_waveNr);
 
-		if (_waveNr < 2)
+		if (_waveNr < 3)
 		{
 			StartCoroutine(SpawnEnemiesRoutine());
 		}

@@ -19,6 +19,8 @@ public class BigEnemy : MonoBehaviour
 	[SerializeField] private Renderer _rend;
 	[SerializeField] private GameObject _smallExploPrefab;
 
+	private WaitForSeconds _wait04Sec = new WaitForSeconds(0.4f);
+	private WaitForSeconds _wait05Sec = new WaitForSeconds(0.5f);
 
 	private bool _readyToStart;
 	private bool _moveLeft;
@@ -104,7 +106,7 @@ public class BigEnemy : MonoBehaviour
 
 	IEnumerator ReadyToStartRoutine()
 	{
-		yield return new WaitForSeconds(0.4f);
+		yield return _wait04Sec;
 		_readyToStart = true;
 	}
 	#endregion
@@ -134,7 +136,7 @@ public class BigEnemy : MonoBehaviour
 
 	IEnumerator FireRoutine() 
 	{
-		yield return new WaitForSeconds(0.5f);
+		yield return _wait05Sec;
 
 		while (_isAlive)
 		{

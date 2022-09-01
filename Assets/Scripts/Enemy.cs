@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _speed;
 	[SerializeField] private Animator _anim;
 	[SerializeField] private Collider2D _collider;
+	[SerializeField] private GameObject _shieldEnemy;
+	private bool _shieldOn;
 
 	[SerializeField] private float _enemyExploTime;
 
@@ -33,6 +35,16 @@ public class Enemy : MonoBehaviour
 	}
 	private void Start()
 	{
+		int i = UnityEngine.Random.Range(0, 2);
+
+		if (i == 0)
+		{
+			_shieldEnemy.SetActive(true);
+			_shieldOn = true;
+		}
+		else
+			_shieldOn = false;
+
 		SpawnPosition();
 
 		_gamePlaying = true;
@@ -54,22 +66,28 @@ public class Enemy : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		
-		if (other.CompareTag("Player"))
+		if (_shieldOn)
 		{
-			_isThisEnemyAlive = false;
-			OnEnemyDeathPlayer?.Invoke();
-			EnemyDeath();
+			_shieldOn = false;
 		}
-
-		else if (other.CompareTag("Laser"))
+		else
 		{
-			_isThisEnemyAlive = false;
-			int score = UnityEngine.Random.Range(10, 30);
-			Destroy(other.gameObject);
-			OnEnemyDeathLaser?.Invoke(score);
-			OnEnemyDeathPlaySound?.Invoke();
-			EnemyDeath();
+			if (other.CompareTag("Player"))
+			{
+				_isThisEnemyAlive = false;
+				OnEnemyDeathPlayer?.Invoke();
+				EnemyDeath();
+			}
+
+			else if (other.CompareTag("Laser"))
+			{
+				_isThisEnemyAlive = false;
+				int score = UnityEngine.Random.Range(10, 30);
+				Destroy(other.gameObject);
+				OnEnemyDeathLaser?.Invoke(score);
+				OnEnemyDeathPlaySound?.Invoke();
+				EnemyDeath();
+			}
 		}
 	}
 

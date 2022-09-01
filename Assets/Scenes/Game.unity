@@ -2757,7 +2757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyTimeSpawn: 2
-  _playerAlive: 1
+  _gameRunning: 1
   _enemyPrefab: {fileID: 5423309683584635154, guid: 98ef583a4814340f4a71c7231f928feb, type: 3}
   _enemyContainer: {fileID: 1645064122}
   _bigEnemy: {fileID: 1906689053765200048, guid: 8de78fb3684194c7282b805bc4e1c10b, type: 3}
