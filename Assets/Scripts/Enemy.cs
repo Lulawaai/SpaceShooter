@@ -23,6 +23,8 @@ public class Enemy : MonoBehaviour
 
 	private bool _gamePlaying;
 	private bool _isThisEnemyAlive;
+	[SerializeField] private bool _playerDetected = false;
+	private Transform _playerTransform;
 
 	public static event Action<int> OnEnemyDeathLaser;
 	public static event Action OnEnemyDeathPlayer;
@@ -32,19 +34,12 @@ public class Enemy : MonoBehaviour
 	{
 		Player.OnDeath += GameOver;
 		BigEnemy.OnBigEnemyDead += GameOver;
+		EnemyPlayerDetection.OnPlayerDetection += PlayerDetected;
+		EnemyPlayerDetection.OnPlayerOut += PlayerOut;
 	}
 	private void Start()
 	{
-		int i = UnityEngine.Random.Range(0, 2);
-
-		if (i == 0)
-		{
-			_shieldEnemy.SetActive(true);
-			_shieldOn = true;
-		}
-		else
-			_shieldOn = false;
-
+		ShieldForTheEnemy();
 		SpawnPosition();
 
 		_gamePlaying = true;
@@ -60,8 +55,31 @@ public class Enemy : MonoBehaviour
     {
 		if (_gamePlaying == true)
         {
-			Movement();
+			if (_playerDetected == true)
+			{
+				float withinRange = 0.01f;
+				float dist = Vector3.Distance(transform.position, _playerTransform.position);
+				if (dist > withinRange)
+				{
+					MoveTowardsTarget();
+
+					Vector3 diff = _playerTransform.position - transform.position;
+					float angle = Mathf.Atan2(diff.y, diff.x);
+
+					transform.rotation = Quaternion.Euler(0f, 0f, (angle * Mathf.Rad2Deg) + 90);
+				}
+
+			}
+			else
+			{
+				Movement();
+			}
 		}
+	}
+
+	private void MoveTowardsTarget()
+	{
+		transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, 1 * Time.deltaTime);
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -85,7 +103,6 @@ public class Enemy : MonoBehaviour
 				int score = UnityEngine.Random.Range(10, 30);
 				Destroy(other.gameObject);
 				OnEnemyDeathLaser?.Invoke(score);
-				OnEnemyDeathPlaySound?.Invoke();
 				EnemyDeath();
 			}
 		}
@@ -146,8 +163,10 @@ public class Enemy : MonoBehaviour
 	private void EnemyDeath()
 	{
 		_anim.SetBool("OnEnemyDeath", true);
+		OnEnemyDeathPlaySound?.Invoke();
 
 		_collider.enabled = false;
+		_shieldEnemy.SetActive(false);
 		Destroy(this.gameObject, _enemyExploTime);
 	}
 
@@ -171,9 +190,43 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
+	private void ShieldForTheEnemy()
+	{
+		int i = UnityEngine.Random.Range(0, 2);
+
+		if (i == 0)
+		{
+			_shieldEnemy.SetActive(true);
+			_shieldOn = true;
+		}
+		else
+			_shieldOn = false;
+	}
+
+	private void PlayerDetected(Transform player, GameObject enemy)
+	{
+		if (this.gameObject == enemy)
+		{
+			_playerTransform = player;
+			_playerDetected = true;
+		}
+
+	}
+
+	private void PlayerOut(GameObject enemy)
+	{
+		if (this.gameObject == enemy)
+		{
+			_playerDetected = false;
+		}
+
+	}
+
 	private void OnDisable()
 	{
 		Player.OnDeath -= GameOver;
 		BigEnemy.OnBigEnemyDead -= GameOver;
+		EnemyPlayerDetection.OnPlayerDetection -= PlayerDetected;
+		EnemyPlayerDetection.OnPlayerOut -= PlayerOut;
 	}
 }
