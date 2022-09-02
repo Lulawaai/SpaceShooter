@@ -3,19 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+//laser Enemy Vertical
 public class LaserEnemy : MonoBehaviour
 {
 	[SerializeField] private float _speed;
+	[SerializeField] private bool _backFire;
 
 	public static event Action OnPlayerDamage;
 
 	void Update()
 	{
-		transform.Translate(Vector3.down * _speed * Time.deltaTime);
-
-        if (transform.position.y < -6f)
+		if (_backFire == false)
 		{
-			Destroy(gameObject);
+			transform.Translate(Vector3.down * _speed * Time.deltaTime);
+
+			if (transform.position.y < -6f)
+			{
+				Destroy(gameObject);
+			}
+		}
+		else if (_backFire == true)
+		{
+			transform.Translate(Vector3.up * _speed * Time.deltaTime);
+
+			if (transform.position.y > 6f)
+			{
+				Destroy(gameObject);
+			}
 		}
 	}
 

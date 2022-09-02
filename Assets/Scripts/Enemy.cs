@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
 	[SerializeField] private float _speedTowardsPlayer;
+
 	[SerializeField] private Animator _anim;
 	[SerializeField] private Collider2D _collider;
 	[SerializeField] private GameObject _shieldEnemy;
@@ -15,13 +16,21 @@ public class Enemy : MonoBehaviour
 
 	[SerializeField] private float _enemyExploTime;
 
+	[Header("LaserPrefabs")]
 	[SerializeField] private GameObject _laserVerticalEnemyPrefab;
     [SerializeField] private GameObject _laserHorizontalEnemyPrefab;
-
-    [SerializeField] private int _typeMovement;
+	[SerializeField] private GameObject _laserVertBackPrefab;
+	[SerializeField] private GameObject _laserHoriBackPrefab;
+	[SerializeField] private bool _smartEnemy;
+	[SerializeField] private bool _FireSmart = false;
+	[SerializeField] private int _typeMovement;
+	[SerializeField] private float _smartFiringTime;
+	private WaitForSeconds _waitForSecSmartfiring;
 
 	private Vector3 _offsetLaserVert;
+	private Vector3 _offsetLasVerBack;
 	private Vector3 _offsetLaserHoriz;
+	private Vector3 _offsetLaserHorBack;
 
 	private bool _gamePlaying;
 	private bool _isThisEnemyAlive;
@@ -39,9 +48,13 @@ public class Enemy : MonoBehaviour
 		BigEnemy.OnBigEnemyDead += GameOver;
 		EnemyPlayerDetection.OnPlayerDetection += PlayerDetected;
 		EnemyPlayerDetection.OnPlayerOut += PlayerOut;
+		EnemySmart.OnSmartFireDetection += FireSmart;
+		EnemySmart.OnSmartFireFinished += StopSmartFire;
 	}
 	private void Start()
 	{
+		_waitForSecSmartfiring = new WaitForSeconds(_smartFiringTime);
+		IsSmartEnemy();
 		ShieldForTheEnemy();
 		SpawnPosition();
 
@@ -49,7 +62,9 @@ public class Enemy : MonoBehaviour
 		_isThisEnemyAlive = true;
 
 		_offsetLaserVert = new Vector3(0, -1.08f, 0);
+		_offsetLasVerBack = new Vector3(0, 0.87f, 0);
         _offsetLaserHoriz = new Vector3(0.7f, 0, 0);
+		_offsetLaserHorBack = new Vector3(-0.81f, 0, 0);
 
 		StartCoroutine(FireEnemyRoutine());
 	}
@@ -73,24 +88,6 @@ public class Enemy : MonoBehaviour
 				Movement();
 			}
 		}
-	}
-
-	private void MoveTowardsTarget()
-	{
-		transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, _speedTowardsPlayer * Time.deltaTime);
-	}
-
-	private void RotateTowardsTarget()
-	{
-		Vector3 diff = _playerTransform.position - transform.position;
-		var offset = 90;
-
-		//Mathf.Atan2 == Returns the angle in radians whose Tan(Returns the tangent of angle f in radians.) is y/x.
-		float angle = Mathf.Atan2(diff.y, diff.x);
-
-		// Mathf.Rad2Deg == Radians-to-degrees conversion constant.
-		//This is equal to 360 / (PI * 2).
-		transform.rotation = Quaternion.Euler(0f, 0f, (angle * Mathf.Rad2Deg) + offset);
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -202,6 +199,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
+	#region MoveTowardsEnemy
 	private void ShieldForTheEnemy()
 	{
 		int i = UnityEngine.Random.Range(0, 2);
@@ -232,11 +230,82 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
+	private void MoveTowardsTarget()
+	{
+		transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, _speedTowardsPlayer * Time.deltaTime);
+	}
+
+	private void RotateTowardsTarget()
+	{
+		Vector3 diff = _playerTransform.position - transform.position;
+		var offset = 90;
+
+		//Mathf.Atan2 == Returns the angle in radians whose Tan(Returns the tangent of angle f in radians.) is y/x.
+		float angle = Mathf.Atan2(diff.y, diff.x);
+
+		// Mathf.Rad2Deg == Radians-to-degrees conversion constant.
+		//This is equal to 360 / (PI * 2).
+		transform.rotation = Quaternion.Euler(0f, 0f, (angle * Mathf.Rad2Deg) + offset);
+	}
+	#endregion
+
+	#region SmartEnemy
+	private void IsSmartEnemy()
+	{
+		int i = UnityEngine.Random.Range(0, 2);
+
+		if (i != 0)
+		{
+			_smartEnemy = true;
+		}
+		else
+			_smartEnemy = false;
+	}
+
+	private void FireSmart(GameObject enemy)
+	{
+		_FireSmart = true;
+
+		if (enemy == gameObject && _gamePlaying && _smartEnemy)
+		{
+			StartCoroutine(SmartFireRoutine());
+		}
+	}
+
+	IEnumerator SmartFireRoutine()
+	{
+		while (_FireSmart == true)
+		{
+			switch (_typeMovement)
+			{
+				case 0:
+					Instantiate(_laserVertBackPrefab, transform.position + _offsetLasVerBack, Quaternion.identity);
+					break;
+				case 1:
+					Instantiate(_laserHoriBackPrefab, transform.position + _offsetLaserHoriz, transform.rotation * Quaternion.identity);
+					break;
+			}
+			yield return _waitForSecSmartfiring;
+		}
+	}
+
+	private void StopSmartFire(GameObject enemy)
+	{
+		if (this.gameObject == enemy)
+		{
+			_FireSmart = false;
+		}
+	}
+
+	#endregion
+
 	private void OnDisable()
 	{
 		Player.OnDeath -= GameOver;
 		BigEnemy.OnBigEnemyDead -= GameOver;
 		EnemyPlayerDetection.OnPlayerDetection -= PlayerDetected;
 		EnemyPlayerDetection.OnPlayerOut -= PlayerOut;
+		EnemySmart.OnSmartFireDetection -= FireSmart;
+		EnemySmart.OnSmartFireFinished -= StopSmartFire;
 	}
 }

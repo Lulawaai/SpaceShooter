@@ -6,16 +6,29 @@ using System;
 public class LaserEnemyHori : MonoBehaviour
 {
 	[SerializeField] private float _speed;
+	[SerializeField] private bool _front = true;
 
 	public static event Action OnPlayerDamage;
 
 	void Update()
 	{
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+		if (_front)
+		{
+			transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-		if (transform.position.x > 10.4f)
-        {
-			Destroy(gameObject);
+			if (transform.position.x > 10.4f)
+			{
+				Destroy(gameObject);
+			}
+		}
+		else if (_front == false)
+		{
+			transform.Translate(Vector3.up * _speed * Time.deltaTime);
+
+			if (transform.position.x < -10.4f)
+			{
+				Destroy(gameObject);
+			}
 		}
 	}
 
