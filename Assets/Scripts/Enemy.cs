@@ -6,9 +6,11 @@ using System;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed;
+	[SerializeField] private float _speedTowardsPlayer;
 	[SerializeField] private Animator _anim;
 	[SerializeField] private Collider2D _collider;
 	[SerializeField] private GameObject _shieldEnemy;
+	[SerializeField] private GameObject _shieldDectorGO;
 	private bool _shieldOn;
 
 	[SerializeField] private float _enemyExploTime;
@@ -28,7 +30,8 @@ public class Enemy : MonoBehaviour
 
 	public static event Action<int> OnEnemyDeathLaser;
 	public static event Action OnEnemyDeathPlayer;
-	public static event Action OnEnemyDeathPlaySound;
+	public static event Action OnEnemyDeath;
+	public static event Action<GameObject> OnEnemyDeathShield;
 
 	private void OnEnable()
 	{
@@ -57,18 +60,13 @@ public class Enemy : MonoBehaviour
         {
 			if (_playerDetected == true)
 			{
-				float withinRange = 0.01f;
+				float withinRange = 0.1f;
 				float dist = Vector3.Distance(transform.position, _playerTransform.position);
 				if (dist > withinRange)
 				{
 					MoveTowardsTarget();
-
-					Vector3 diff = _playerTransform.position - transform.position;
-					float angle = Mathf.Atan2(diff.y, diff.x);
-
-					transform.rotation = Quaternion.Euler(0f, 0f, (angle * Mathf.Rad2Deg) + 90);
+					RotateTowardsTarget();
 				}
-
 			}
 			else
 			{
@@ -79,7 +77,20 @@ public class Enemy : MonoBehaviour
 
 	private void MoveTowardsTarget()
 	{
-		transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, 1 * Time.deltaTime);
+		transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, _speedTowardsPlayer * Time.deltaTime);
+	}
+
+	private void RotateTowardsTarget()
+	{
+		Vector3 diff = _playerTransform.position - transform.position;
+		var offset = 90;
+
+		//Mathf.Atan2 == Returns the angle in radians whose Tan(Returns the tangent of angle f in radians.) is y/x.
+		float angle = Mathf.Atan2(diff.y, diff.x);
+
+		// Mathf.Rad2Deg == Radians-to-degrees conversion constant.
+		//This is equal to 360 / (PI * 2).
+		transform.rotation = Quaternion.Euler(0f, 0f, (angle * Mathf.Rad2Deg) + offset);
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -163,7 +174,8 @@ public class Enemy : MonoBehaviour
 	private void EnemyDeath()
 	{
 		_anim.SetBool("OnEnemyDeath", true);
-		OnEnemyDeathPlaySound?.Invoke();
+		OnEnemyDeath?.Invoke(); //AudioManager 
+		OnEnemyDeathShield?.Invoke(_shieldDectorGO); //EnemyPlayerDetection
 
 		_collider.enabled = false;
 		_shieldEnemy.SetActive(false);
@@ -194,7 +206,7 @@ public class Enemy : MonoBehaviour
 	{
 		int i = UnityEngine.Random.Range(0, 2);
 
-		if (i == 0)
+		if (i == 1)
 		{
 			_shieldEnemy.SetActive(true);
 			_shieldOn = true;
@@ -210,7 +222,6 @@ public class Enemy : MonoBehaviour
 			_playerTransform = player;
 			_playerDetected = true;
 		}
-
 	}
 
 	private void PlayerOut(GameObject enemy)
@@ -219,7 +230,6 @@ public class Enemy : MonoBehaviour
 		{
 			_playerDetected = false;
 		}
-
 	}
 
 	private void OnDisable()

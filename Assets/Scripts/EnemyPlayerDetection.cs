@@ -12,7 +12,7 @@ public class EnemyPlayerDetection : MonoBehaviour
 
 	private void OnEnable()
 	{
-		Enemy.OnEnemyDeathPlaySound += ColliderOff;
+		Enemy.OnEnemyDeathShield += ColliderOff;
 	}
 
 	private void OnTriggerEnter2D(Collider2D other)
@@ -31,13 +31,16 @@ public class EnemyPlayerDetection : MonoBehaviour
 		}
 	}
 
-	private void ColliderOff()
+	private void ColliderOff(GameObject shield)
 	{
-		_collider.enabled = false;
+		if (gameObject == shield)
+		{
+			_collider.enabled = false;
+		}
 	}
 
 	private void OnDisable()
 	{
-		Enemy.OnEnemyDeathPlaySound -= ColliderOff;
+		Enemy.OnEnemyDeathShield -= ColliderOff;
 	}
 }

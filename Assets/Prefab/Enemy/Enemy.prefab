@@ -184,9 +184,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
+  _speedTowardsPlayer: 4
   _anim: {fileID: 667945742}
   _collider: {fileID: 467926412191212309}
   _shieldEnemy: {fileID: 1221052762966407618}
+  _shieldDectorGO: {fileID: 2463154255047119647}
   _enemyExploTime: 2
   _laserVerticalEnemyPrefab: {fileID: 3752386393466435287, guid: dd46e60358cc54d1c85890d018c882e9, type: 3}
   _laserHorizontalEnemyPrefab: {fileID: 8743083600690073103, guid: c4c480f3201a44e5d8e7f678669dad8a, type: 3}
