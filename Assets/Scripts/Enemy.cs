@@ -50,6 +50,7 @@ public class Enemy : MonoBehaviour
 		EnemyPlayerDetection.OnPlayerOut += PlayerOut;
 		EnemySmart.OnSmartFireDetection += FireSmart;
 		EnemySmart.OnSmartFireFinished += StopSmartFire;
+		EnemyDetectPickUp.OnDetectingPowerUp += DestroyPickUp;
 	}
 	private void Start()
 	{
@@ -299,6 +300,22 @@ public class Enemy : MonoBehaviour
 
 	#endregion
 
+	private void DestroyPickUp(GameObject enemy)
+	{
+		if (gameObject == enemy)
+		{
+			switch (_typeMovement)
+			{
+				case 0:
+					Instantiate(_laserVerticalEnemyPrefab, transform.position + _offsetLaserVert, Quaternion.identity);
+					break;
+				case 1:
+					Instantiate(_laserHorizontalEnemyPrefab, transform.position + _offsetLaserHoriz, transform.rotation * Quaternion.identity);
+					break;
+			}
+		}
+	}
+
 	private void OnDisable()
 	{
 		Player.OnDeath -= GameOver;
@@ -307,5 +324,6 @@ public class Enemy : MonoBehaviour
 		EnemyPlayerDetection.OnPlayerOut -= PlayerOut;
 		EnemySmart.OnSmartFireDetection -= FireSmart;
 		EnemySmart.OnSmartFireFinished -= StopSmartFire;
+		EnemyDetectPickUp.OnDetectingPowerUp -= DestroyPickUp;
 	}
 }

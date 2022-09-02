@@ -21,8 +21,8 @@ public class PowerUp : MonoBehaviour
 
     private void Start()
     {
-        float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
-        Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
+		float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
+		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
 
         transform.position = spawnPos;
     }
