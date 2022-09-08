@@ -98,6 +98,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
+  _moveTowardsPlayer: 0
+  _playerTrans: {fileID: 0}
+  _speedTowardsPlayer: 8
   _powerUpID: 3
 --- !u!58 &4127816118731822955
 CircleCollider2D:

@@ -71,6 +71,15 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CollectPickUps"",
+                    ""type"": ""Button"",
+                    ""id"": ""69df8404-20fc-4714-b600-7282d0e7d85c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -271,6 +280,17 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                     ""action"": ""SpeedUP"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d0dc90fe-86fd-49e6-a1f8-99707c3334b9"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CollectPickUps"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -284,6 +304,7 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         m_Player_RestartGame = m_Player.FindAction("RestartGame", throwIfNotFound: true);
         m_Player_ESCGame = m_Player.FindAction("ESCGame", throwIfNotFound: true);
         m_Player_SpeedUP = m_Player.FindAction("SpeedUP", throwIfNotFound: true);
+        m_Player_CollectPickUps = m_Player.FindAction("CollectPickUps", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -348,6 +369,7 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_RestartGame;
     private readonly InputAction m_Player_ESCGame;
     private readonly InputAction m_Player_SpeedUP;
+    private readonly InputAction m_Player_CollectPickUps;
     public struct PlayerActions
     {
         private @GameInputActions m_Wrapper;
@@ -357,6 +379,7 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         public InputAction @RestartGame => m_Wrapper.m_Player_RestartGame;
         public InputAction @ESCGame => m_Wrapper.m_Player_ESCGame;
         public InputAction @SpeedUP => m_Wrapper.m_Player_SpeedUP;
+        public InputAction @CollectPickUps => m_Wrapper.m_Player_CollectPickUps;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -381,6 +404,9 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                 @SpeedUP.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
                 @SpeedUP.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
                 @SpeedUP.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSpeedUP;
+                @CollectPickUps.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCollectPickUps;
+                @CollectPickUps.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCollectPickUps;
+                @CollectPickUps.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCollectPickUps;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -400,6 +426,9 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
                 @SpeedUP.started += instance.OnSpeedUP;
                 @SpeedUP.performed += instance.OnSpeedUP;
                 @SpeedUP.canceled += instance.OnSpeedUP;
+                @CollectPickUps.started += instance.OnCollectPickUps;
+                @CollectPickUps.performed += instance.OnCollectPickUps;
+                @CollectPickUps.canceled += instance.OnCollectPickUps;
             }
         }
     }
@@ -411,5 +440,6 @@ public partial class @GameInputActions : IInputActionCollection2, IDisposable
         void OnRestartGame(InputAction.CallbackContext context);
         void OnESCGame(InputAction.CallbackContext context);
         void OnSpeedUP(InputAction.CallbackContext context);
+        void OnCollectPickUps(InputAction.CallbackContext context);
     }
 }

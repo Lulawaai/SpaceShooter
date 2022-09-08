@@ -6,6 +6,9 @@ using System;
 public class PowerUp : MonoBehaviour
 {
 	[SerializeField] private float _speed = 3.0f;
+	[SerializeField] private bool _moveTowardsPlayer;
+	[SerializeField] private Transform _playerTrans;
+	[SerializeField] private float _speedTowardsPlayer;
 
 	[Header("5-ExtraFire, 6-Slow")]
 	[Header("0-TripleLaser, 1-Speed, 2-Shield, 3-Fire, 4-Health")]
@@ -19,7 +22,13 @@ public class PowerUp : MonoBehaviour
     public static event Action OnPlayerHit_ExtraFire;
 	public static event Action OnPlayerHit_Slow;
 
-    private void Start()
+	private void OnEnable()
+	{
+		Player.OnSharingPlayerPos += MoveTowardsPlayer;
+		GameInput.OnCollectPickUpsFinished += StopMovingTowardsPlayer;
+	}
+
+	private void Start()
     {
 		float randomX = UnityEngine.Random.Range(-9.33f, 9.33f);
 		Vector3 spawnPos = new Vector3(randomX, 7.0f, 0);
@@ -73,11 +82,41 @@ public class PowerUp : MonoBehaviour
 	}
 	private void Move()
 	{
-		transform.Translate(Vector3.down * _speed * Time.deltaTime);
+		if (_moveTowardsPlayer == false)
+		{
+			transform.Translate(Vector3.down * _speed * Time.deltaTime);
+		}
+		else if (_moveTowardsPlayer == true)
+		{
+			float withinRange = 0.1f;
+			float dist = Vector3.Distance(transform.position, _playerTrans.position);
+
+			if (dist > withinRange)
+			{
+				transform.position = Vector3.MoveTowards(transform.position, _playerTrans.position, _speedTowardsPlayer * Time.deltaTime);
+			}
+		}
 
 		if (transform.position.y < -6.0f)
 		{
 			Destroy(this.gameObject);
 		}
+	}
+
+	private void MoveTowardsPlayer (Transform player)
+	{
+		_playerTrans = player;
+		_moveTowardsPlayer = true;
+	}
+
+	private void StopMovingTowardsPlayer()
+	{
+		_moveTowardsPlayer = false;
+	}
+
+	private void OnDisable()
+	{
+		Player.OnSharingPlayerPos -= MoveTowardsPlayer;
+		GameInput.OnCollectPickUpsFinished -= StopMovingTowardsPlayer;
 	}
 }

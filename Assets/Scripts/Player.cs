@@ -33,8 +33,8 @@ public class Player : MonoBehaviour
 	private float _nextFire;
 	private WaitForSeconds _wait5secs = new WaitForSeconds(5.0f);
 
-    //
-    private int _speedSituations = 0;
+	//
+	private int _speedSituations = 0;
 
 	[Header("Speed")]
 	[SerializeField] private float _speedPowerUP;
@@ -47,36 +47,38 @@ public class Player : MonoBehaviour
 
 	[Header("ExtraFire")]
 	[SerializeField] private bool _isExtraFire = false;
-    [SerializeField] private GameObject _extraFirePrefab;
+	[SerializeField] private GameObject _extraFirePrefab;
 
-    [Header("Slow")]
+	[Header("Slow")]
 	[SerializeField] private float _speedSlow;
 	private WaitForSeconds _wait3secs = new WaitForSeconds(3.0f);
 
 	public static event Action OnDeath;
-    public static event Action<int> OnLossingLives;
-    public static event Action<int> OnPlayerFiring;
-    public static event Action OnExplosion;
-    public static event Action OnPowerUp;
-    public static event Action OnOutofShots;
+	public static event Action<int> OnLossingLives;
+	public static event Action<int> OnPlayerFiring;
+	public static event Action OnExplosion;
+	public static event Action OnPowerUp;
+	public static event Action OnOutofShots;
 	public static event Action<float, float> OnDamageCameraShake;
+	public static event Action<Transform> OnSharingPlayerPos;
 
 	private void OnEnable()
 	{
 		GameInput.OnFire += Fire;
 		GameInput.OnSpeedingUP += Acceleration;
 		GameInput.OnSetBackNormalSpeed += Decceleration;
+		GameInput.OnCollectPickUPs += CollectPickUps;
 		PowerUp.OnPlayerHit_TripleLaser += TripleShotPowerUP;
 		PowerUp.OnPlayerHit_Speed += SpeedPowerUP;
-        PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
-        PowerUp.OnPlayerHit_FireRefill += FireRefill;
-        PowerUp.OnPlayerHit_Health += HealthRefill;
-        PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
+		PowerUp.OnPlayerHit_Shield += ShieldPowerUP;
+		PowerUp.OnPlayerHit_FireRefill += FireRefill;
+		PowerUp.OnPlayerHit_Health += HealthRefill;
+		PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
 		PowerUp.OnPlayerHit_Slow += SlowDown;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		BigEnemy.OnBigEnemyDead += GameOver;
 		LaserEnemy.OnPlayerDamage += Damage;
-        LaserEnemyHori.OnPlayerDamage += Damage;
+		LaserEnemyHori.OnPlayerDamage += Damage;
 	}
 
 	private void Start()
@@ -94,10 +96,10 @@ public class Player : MonoBehaviour
 		ClampPlayerMove();
 
 		if (_numberShots == 0 && _isOutofShots == false)
-        {
-            OnOutofShots?.Invoke(); //to play out of shot sound
-            _isOutofShots = true;
-        }
+		{
+			OnOutofShots?.Invoke(); //to play out of shot sound
+			_isOutofShots = true;
+		}
 	}
 
 	#region PlayerMove
@@ -116,8 +118,8 @@ public class Player : MonoBehaviour
 		}
 	}
 
-    public void Move(Vector2 move)
-    {
+	public void Move(Vector2 move)
+	{
 		if (_gameOver == false)
 		{
 			_direction = move;
@@ -154,51 +156,50 @@ public class Player : MonoBehaviour
 
 			transform.Translate(_direction * _speed * Time.deltaTime);
 		}
-
 	}
 
 	private void Acceleration()
 	{
-        _speedSituations = 2;
+		_speedSituations = 2;
 	}
 
 	private void Decceleration()
 	{
-        _speedSituations = 0;
+		_speedSituations = 0;
 	}
 
 	private void SlowDown()
-    {
-        _speedSituations = 3;
-        StartCoroutine(SlowBackRoutine());
-    }
+	{
+		_speedSituations = 3;
+		StartCoroutine(SlowBackRoutine());
+	}
 
 	IEnumerator SlowBackRoutine()
-    {
+	{
 		yield return _wait3secs;
 		_speedSituations = 0;
-    }
+	}
 
-    #endregion
+	#endregion
 
-    private void Damage()
+	private void Damage()
 	{
 		if (_isShieldOn == true)
 		{
-            if (_shieldNumber > 0)
-            {
+			if (_shieldNumber > 0)
+			{
 				_shieldGo[_shieldNumber - 1].SetActive(false);
 				_shieldNumber -= 1;
-            }
+			}
 			else
-                _isShieldOn = false;
+				_isShieldOn = false;
 
 			return;
 		}
 
 		_lives--;
 		OnExplosion?.Invoke();
-        OnDamageCameraShake?.Invoke(_damageShakeAmount, _damageShakeDuration);
+		OnDamageCameraShake?.Invoke(_damageShakeAmount, _damageShakeDuration);
 		OnLossingLives?.Invoke(_lives);
 
 		PlayerDamageUpdate();
@@ -212,36 +213,36 @@ public class Player : MonoBehaviour
 		}
 	}
 
-    private void PlayerDamageUpdate()
-    {
-        switch (_lives)
-        {
-            case 3:
-                _damageLeft.SetActive(false);
-                _damageRight.SetActive(false);
+	private void PlayerDamageUpdate()
+	{
+		switch (_lives)
+		{
+			case 3:
+				_damageLeft.SetActive(false);
+				_damageRight.SetActive(false);
 				break;
-            case 2:
-                _damageLeft.SetActive(true);
-                _damageRight.SetActive(false);
-                break;
-            case 1:
-                _damageRight.SetActive(true);
-                break;
-        }
+			case 2:
+				_damageLeft.SetActive(true);
+				_damageRight.SetActive(false);
+				break;
+			case 1:
+				_damageRight.SetActive(true);
+				break;
+		}
 	}
 
-    private void Fire()
+	private void Fire()
 	{
 		if (Time.time > _nextFire && _numberShots > 0 && _gameOver == false)
 		{
 			_nextFire = Time.time + _fireRate;
 
 			if (_isExtraFire == false)
-            {
+			{
 				if (_isTripleShotActive == true)
 				{
 					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
-                    _numberShots -= 1;
+					_numberShots -= 1;
 					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 					StartCoroutine(TripleLaserCoroutine());
 				}
@@ -253,13 +254,12 @@ public class Player : MonoBehaviour
 				}
 			}
 			else
-            {
-                Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
+			{
+				Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
 				_numberShots -= 1;
 				OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 			}
-
-        }
+		}
 	}
 
 	#region powerUps
@@ -285,7 +285,7 @@ public class Player : MonoBehaviour
 	IEnumerator SpeedUPRoutine()
 	{
 		yield return _wait5secs;
-        _speedSituations = 0;
+		_speedSituations = 0;
 		_isSpeepPowerUPActive = false;
 	}
 
@@ -295,39 +295,39 @@ public class Player : MonoBehaviour
 		OnPowerUp?.Invoke();
 
 		int i = 0;
-		while(i < 3)
-        {
+		while (i < 3)
+		{
 			_shieldGo[i].SetActive(true);
-            i++;
-        }
+			i++;
+		}
 	}
 
 	private void ExtraFire()
-    {
+	{
 		_isExtraFire = true;
-        StartCoroutine(ExtraFireRoutine());
-    }
+		StartCoroutine(ExtraFireRoutine());
+	}
 
 	IEnumerator ExtraFireRoutine()
-    {
-        yield return _wait5secs;
+	{
+		yield return _wait5secs;
 		_isExtraFire = false;
-    }
+	}
 
 	private void FireRefill()
-    {
-        _numberShots = 15;
-    }
+	{
+		_numberShots = 15;
+	}
 
 	private void HealthRefill()
-    {
+	{
 		if (_lives < 3)
-        {
+		{
 			_lives += 1;
-            OnLossingLives?.Invoke(_lives); //update UI
-            PlayerDamageUpdate();
+			OnLossingLives?.Invoke(_lives); //update UI
+			PlayerDamageUpdate();
 		}
-    }
+	}
 	#endregion
 
 	private void GameOver()
@@ -335,12 +335,18 @@ public class Player : MonoBehaviour
 		_gameOver = true;
 	}
 
+	private void CollectPickUps()
+	{
+		OnSharingPlayerPos?.Invoke(gameObject.transform);
+	}
+
 	private void OnDisable()
 	{
 		GameInput.OnFire -= Fire;
 		GameInput.OnSpeedingUP += Acceleration;
-		GameInput.OnSetBackNormalSpeed += Decceleration;
+		GameInput.OnSetBackNormalSpeed -= Decceleration;
 		PowerUp.OnPlayerHit_TripleLaser -= TripleShotPowerUP;
+		GameInput.OnCollectPickUPs -= CollectPickUps;
 		PowerUp.OnPlayerHit_Speed -= SpeedPowerUP;
 		PowerUp.OnPlayerHit_Shield -= ShieldPowerUP;
         PowerUp.OnPlayerHit_FireRefill -= FireRefill;

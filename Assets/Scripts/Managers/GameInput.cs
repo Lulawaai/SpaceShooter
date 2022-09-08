@@ -15,6 +15,8 @@ public class GameInput : MonoBehaviour
 	public static event Action OnQuitGame;
 	public static event Action OnSpeedingUP;
 	public static event Action OnSetBackNormalSpeed;
+	public static event Action OnCollectPickUPs;
+	public static event Action OnCollectPickUpsFinished;
 
 	void Start()
 	{
@@ -23,12 +25,6 @@ public class GameInput : MonoBehaviour
 		_input.Player.Fire.performed += Fire_performed;
 		_input.Player.RestartGame.performed += RestartGame_performed;
 		_input.Player.ESCGame.performed += ESCGame_performed;
-		//_input.Player.SpeedUP.performed += SpeedUP_performed;
-	}
-
-	private void SpeedUP_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
-	{
-		OnSpeedingUP?.Invoke();
 	}
 
 	private void ESCGame_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -51,6 +47,25 @@ public class GameInput : MonoBehaviour
 		MovePlayer();
 		SpeedUP();
 		BackNormalSpeed();
+
+		MovePickUpTowarsPlayer();
+		StopMovingPickUpTowardsPlayer();
+	}
+
+	private void MovePickUpTowarsPlayer()
+	{
+		if (_input.Player.CollectPickUps.IsPressed())
+		{
+			OnCollectPickUPs?.Invoke(); //Player to send her Pos to PowerUps
+		}
+	}
+
+	private void StopMovingPickUpTowardsPlayer()
+	{
+		if (_input.Player.CollectPickUps.WasReleasedThisFrame())
+		{
+			OnCollectPickUpsFinished?.Invoke(); //PowerUps to move back down
+		}
 	}
 
 	private void MovePlayer()
