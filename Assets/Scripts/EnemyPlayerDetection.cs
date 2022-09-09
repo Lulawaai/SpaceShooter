@@ -9,6 +9,7 @@ public class EnemyPlayerDetection : MonoBehaviour
 
 	public static event Action<Transform, GameObject> OnPlayerDetection;
 	public static event Action<GameObject> OnPlayerOut;
+	public static event Action<GameObject, Transform> OnLaserDetection;
 
 	private void OnEnable()
 	{
@@ -20,6 +21,11 @@ public class EnemyPlayerDetection : MonoBehaviour
 		if (other.CompareTag("Player"))
 		{
 			OnPlayerDetection?.Invoke(other.transform, gameObject.transform.parent.gameObject);
+		}
+
+		if (other.CompareTag("Laser"))
+		{
+			OnLaserDetection?.Invoke(gameObject.transform.parent.gameObject, other.transform); //to enemy
 		}
 	}
 

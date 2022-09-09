@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private GameObject _laserVertBackPrefab;
 	[SerializeField] private GameObject _laserHoriBackPrefab;
 	[SerializeField] private bool _smartEnemy;
+	[SerializeField] private bool _enemyAvoidingShots;
 	[SerializeField] private bool _FireSmart = false;
 	[SerializeField] private int _typeMovement;
 	[SerializeField] private float _smartFiringTime;
@@ -48,6 +49,7 @@ public class Enemy : MonoBehaviour
 		BigEnemy.OnBigEnemyDead += GameOver;
 		EnemyPlayerDetection.OnPlayerDetection += PlayerDetected;
 		EnemyPlayerDetection.OnPlayerOut += PlayerOut;
+		EnemyPlayerDetection.OnLaserDetection += LaserDetected;
 		EnemySmart.OnSmartFireDetection += FireSmart;
 		EnemySmart.OnSmartFireFinished += StopSmartFire;
 		EnemyDetectPickUp.OnDetectingPowerUp += DestroyPickUp;
@@ -58,6 +60,7 @@ public class Enemy : MonoBehaviour
 		IsSmartEnemy();
 		ShieldForTheEnemy();
 		SpawnPosition();
+		IsEnemyAvoidShots();
 
 		_gamePlaying = true;
 		_isThisEnemyAlive = true;
@@ -297,7 +300,35 @@ public class Enemy : MonoBehaviour
 			_FireSmart = false;
 		}
 	}
+	#endregion
 
+	#region enemyAvoidShots
+	private void IsEnemyAvoidShots()
+	{
+		int i = UnityEngine.Random.Range(0, 5);
+
+		if (i == 0)
+		{
+			_enemyAvoidingShots = true;
+		}
+		else
+			_enemyAvoidingShots = false;
+	}
+
+	private void LaserDetected(GameObject enemy, Transform laserTrans)
+	{
+		if (gameObject == enemy && _enemyAvoidingShots)
+		{
+			float minDist = 0.1f;
+			float dist = Vector3.Distance(transform.position, laserTrans.position);
+			float speedMoveAway = 10f;
+
+			if (dist > minDist)
+			{
+				transform.position = Vector2.MoveTowards(transform.position, laserTrans.position, -1 * speedMoveAway * Time.deltaTime);
+			}
+		}
+	}
 	#endregion
 
 	private void DestroyPickUp(GameObject enemy)
@@ -322,6 +353,7 @@ public class Enemy : MonoBehaviour
 		BigEnemy.OnBigEnemyDead -= GameOver;
 		EnemyPlayerDetection.OnPlayerDetection -= PlayerDetected;
 		EnemyPlayerDetection.OnPlayerOut -= PlayerOut;
+		EnemyPlayerDetection.OnLaserDetection -= LaserDetected;
 		EnemySmart.OnSmartFireDetection -= FireSmart;
 		EnemySmart.OnSmartFireFinished -= StopSmartFire;
 		EnemyDetectPickUp.OnDetectingPowerUp -= DestroyPickUp;
