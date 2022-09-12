@@ -10,7 +10,7 @@ public class PowerUp : MonoBehaviour
 	[SerializeField] private Transform _playerTrans;
 	[SerializeField] private float _speedTowardsPlayer;
 
-	[Header("5-ExtraFire, 6-Slow")]
+	[Header("5-ExtraFire, 6-Slow, 7-HomingProj")]
 	[Header("0-TripleLaser, 1-Speed, 2-Shield, 3-Fire, 4-Health")]
 	[SerializeField] int _powerUpID;
 
@@ -21,6 +21,7 @@ public class PowerUp : MonoBehaviour
     public static event Action OnPlayerHit_Health;
     public static event Action OnPlayerHit_ExtraFire;
 	public static event Action OnPlayerHit_Slow;
+	public static event Action OnPlayerHit_HomingP;
 
 	private void OnEnable()
 	{
@@ -67,6 +68,9 @@ public class PowerUp : MonoBehaviour
                     break;
 				case 6:
 					OnPlayerHit_Slow?.Invoke();  //Player
+					break;
+				case 7:
+					OnPlayerHit_HomingP.Invoke(); //Player
 					break;
                 default:
 					Debug.Log("default case");

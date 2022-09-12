@@ -111,6 +111,7 @@ public class Enemy : MonoBehaviour
 
 			else if (other.CompareTag("Laser"))
 			{
+				Debug.Log("detected laser" + gameObject.name);
 				_isThisEnemyAlive = false;
 				int score = UnityEngine.Random.Range(10, 30);
 				Destroy(other.gameObject);
@@ -203,7 +204,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-	#region MoveTowardsEnemy
+	
 	private void ShieldForTheEnemy()
 	{
 		int i = UnityEngine.Random.Range(0, 2);
@@ -217,6 +218,7 @@ public class Enemy : MonoBehaviour
 			_shieldOn = false;
 	}
 
+	#region MoveTowardsEnemy
 	private void PlayerDetected(Transform player, GameObject enemy)
 	{
 		if (this.gameObject == enemy)

@@ -8,6 +8,7 @@ public class SpawnManager : MonoBehaviour
 	[SerializeField] private float _enemyTimeSpawn = 0.1f;
 	private WaitForSeconds _waitEnemyTime;
 	private WaitForSeconds _wait2Secs = new WaitForSeconds(2.0f);
+	private WaitForSeconds _wait3Secs = new WaitForSeconds(3.0f);
 
 	[SerializeField] private bool _gameRunning = true;
 
@@ -26,6 +27,7 @@ public class SpawnManager : MonoBehaviour
 	[SerializeField] private GameObject _powerUpContainer;
 	[SerializeField] private GameObject[] _powerUPPrefab;
 	[SerializeField] private GameObject[] _powerHealthFirePrefab;
+	[SerializeField] private GameObject[] _powerUPExtraFire;
 
 	public static event Action<int> OnUpdatingWaveNr;
 
@@ -84,7 +86,12 @@ public class SpawnManager : MonoBehaviour
 			StartCoroutine(SpawnEnemiesRoutine());
 		}
 		else
-			Instantiate(_bigEnemy);
+		{
+			if (_gameRunning == true)
+			{
+				Instantiate(_bigEnemy);
+			}
+		}		
 	}
 
 	IEnumerator SpawnPowerUPRoutine()
@@ -113,12 +120,13 @@ public class SpawnManager : MonoBehaviour
 	}
 
 	IEnumerator ExtraFireRoutine()
-    {
+	{
         yield return _wait2Secs;
-		if (_gameRunning == true)
+		while (_gameRunning == true)
         {
+			int randomPowerUP = UnityEngine.Random.Range(0, _powerUPExtraFire.Length);
 			yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 6f));
-			GameObject firePower = Instantiate(_powerUPPrefab[2]);
+			GameObject firePower = Instantiate(_powerUPExtraFire[randomPowerUP]);
             firePower.transform.parent = _powerUpContainer.transform;
 		}
     }

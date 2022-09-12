@@ -1126,6 +1126,7 @@ MonoBehaviour:
   _3laserOffset: {x: 0, y: -0.5, z: 0}
   _fireRate: 0.3
   _isTripleShotActive: 0
+  _typeOfFire: 0
   _speedPowerUP: 10
   _isSpeepPowerUPActive: 0
   _isShieldOn: 0
@@ -1137,6 +1138,8 @@ MonoBehaviour:
   _isExtraFire: 0
   _extraFirePrefab: {fileID: 446453727005480891, guid: 69f39126480cb4774881def7302fbd2f, type: 3}
   _speedSlow: 0.5
+  _isHomingProj: 0
+  _homingProjPrefab: {fileID: 4757790685218631078, guid: 8c7f2cd59a5514a7cbd9e9320f18f6c7, type: 3}
 --- !u!1 &443606039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2770,12 +2773,14 @@ MonoBehaviour:
   _powerUPPrefab:
   - {fileID: 4109171619428277359, guid: 4f2aa295602304d9abd95d9510d34339, type: 3}
   - {fileID: 6669241927347790908, guid: ccabcda42c8d245d2a2bdd61dd46e5a2, type: 3}
-  - {fileID: 4709601858746124096, guid: 8356e5a70909c47aaa43903593e6e41d, type: 3}
   - {fileID: 7707169393273498162, guid: 83f23fe19580147da828a8d78535a4df, type: 3}
   - {fileID: 3978923964131651178, guid: d547801fab3d34607971d8d58477a6c9, type: 3}
   _powerHealthFirePrefab:
   - {fileID: 2239011248125801316, guid: 1c2298b0f34aa4c6dbaab23474abe287, type: 3}
   - {fileID: 3522135115542643486, guid: 95ecaae0f7aba497c8592fcbb8348855, type: 3}
+  _powerUPExtraFire:
+  - {fileID: 4709601858746124096, guid: 8356e5a70909c47aaa43903593e6e41d, type: 3}
+  - {fileID: 41347041746180975, guid: fc840c30274c34b33b20751693f30856, type: 3}
 --- !u!1 &1196864266
 GameObject:
   m_ObjectHideFlags: 0

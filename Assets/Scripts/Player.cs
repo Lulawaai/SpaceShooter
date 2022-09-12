@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
 	[SerializeField] private Vector3 _3laserOffset = new Vector3(0, -3.35f, 0);
 	[SerializeField] private float _fireRate = 0.5f;
 	[SerializeField] private bool _isTripleShotActive = false;
+	[SerializeField] private int _typeOfFire = 0;
 	private float _nextFire;
 	private WaitForSeconds _wait5secs = new WaitForSeconds(5.0f);
 
@@ -45,13 +46,17 @@ public class Player : MonoBehaviour
 	[SerializeField] private GameObject[] _shieldGo;
 	[SerializeField] private int _shieldNumber = 3;
 
-	[Header("ExtraFire")]
+	[Header("ExtraFire")] //Extrafire has a bigger collider
 	[SerializeField] private bool _isExtraFire = false;
 	[SerializeField] private GameObject _extraFirePrefab;
 
 	[Header("Slow")]
 	[SerializeField] private float _speedSlow;
 	private WaitForSeconds _wait3secs = new WaitForSeconds(3.0f);
+
+	[Header("HomingProjectile")]
+	[SerializeField] private bool _isHomingProj;
+	[SerializeField] private GameObject _homingProjPrefab;
 
 	public static event Action OnDeath;
 	public static event Action<int> OnLossingLives;
@@ -75,6 +80,7 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Health += HealthRefill;
 		PowerUp.OnPlayerHit_ExtraFire += ExtraFire;
 		PowerUp.OnPlayerHit_Slow += SlowDown;
+		PowerUp.OnPlayerHit_HomingP += HomingProjectile;
 		Enemy.OnEnemyDeathPlayer += Damage;
 		BigEnemy.OnBigEnemyDead += GameOver;
 		LaserEnemy.OnPlayerDamage += Damage;
@@ -237,7 +243,33 @@ public class Player : MonoBehaviour
 		{
 			_nextFire = Time.time + _fireRate;
 
-			if (_isExtraFire == false)
+			switch(_typeOfFire)
+			{
+				case 0: // normal Fire
+					Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
+					_numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
+					break;
+				case 1: // TripleShot
+					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
+					_numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
+					StartCoroutine(TripleLaserCoroutine());
+					break;
+				case 2: //ExtraFire
+					Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
+					_numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
+					break;
+				case 3: //Homing - 3
+					Instantiate(_homingProjPrefab, transform.position + _laserOffset, Quaternion.identity);
+					_numberShots -= 1;
+					_typeOfFire = 0;
+					break;
+
+			}
+
+			/*if (_isExtraFire == false)
 			{
 				if (_isTripleShotActive == true)
 				{
@@ -258,7 +290,7 @@ public class Player : MonoBehaviour
 				Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
 				_numberShots -= 1;
 				OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
-			}
+			}*/
 		}
 	}
 
@@ -266,12 +298,14 @@ public class Player : MonoBehaviour
 	private void TripleShotPowerUP()
 	{
 		_isTripleShotActive = true;
+		_typeOfFire = 1;
 		OnPowerUp?.Invoke();
 	}
 
 	IEnumerator TripleLaserCoroutine()
 	{
 		yield return _wait5secs;
+		_typeOfFire = 0;
 		_isTripleShotActive = false;
 	}
 
@@ -305,12 +339,14 @@ public class Player : MonoBehaviour
 	private void ExtraFire()
 	{
 		_isExtraFire = true;
+		_typeOfFire = 2;
 		StartCoroutine(ExtraFireRoutine());
 	}
 
 	IEnumerator ExtraFireRoutine()
 	{
 		yield return _wait5secs;
+		_typeOfFire = 0;
 		_isExtraFire = false;
 	}
 
@@ -327,6 +363,12 @@ public class Player : MonoBehaviour
 			OnLossingLives?.Invoke(_lives); //update UI
 			PlayerDamageUpdate();
 		}
+	}
+
+	private void HomingProjectile()
+	{
+		_isHomingProj = true;
+		_typeOfFire = 3;
 	}
 	#endregion
 
@@ -353,6 +395,7 @@ public class Player : MonoBehaviour
         PowerUp.OnPlayerHit_Health -= HealthRefill;
 		PowerUp.OnPlayerHit_ExtraFire -= ExtraFire;
 		PowerUp.OnPlayerHit_Slow -= SlowDown;
+		PowerUp.OnPlayerHit_HomingP -= HomingProjectile;
 		Enemy.OnEnemyDeathPlayer -= Damage;
 		BigEnemy.OnBigEnemyDead -= GameOver;
 		LaserEnemy.OnPlayerDamage -= Damage;
