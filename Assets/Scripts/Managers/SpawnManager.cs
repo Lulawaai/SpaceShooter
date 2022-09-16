@@ -11,11 +11,13 @@ public class SpawnManager : MonoBehaviour
 	private WaitForSeconds _wait3Secs = new WaitForSeconds(3.0f);
 
 	[SerializeField] private bool _gameRunning = true;
+	private bool _lastWave = false;
 
 	[Header("Enemies")]
 	[SerializeField] private GameObject _enemyPrefab;
 	[SerializeField] private GameObject _enemyContainer;
 	[SerializeField] private GameObject _bigEnemy;
+	[SerializeField] private GameObject _bossAIEnemy;
 	[SerializeField] private int _nrEmenies;
 	[SerializeField] private int _nrEmeniesActive;
 	[SerializeField] private int _waveNr;
@@ -34,8 +36,8 @@ public class SpawnManager : MonoBehaviour
 	private void OnEnable()
 	{
 		Player.OnDeath += GameOver;
-		BigEnemy.OnBigEnemyDead += GameOver;
 		Asteroid.OnAsteroidDestroyed += StartSpawning;
+		EnemyBossAI.OnBossAIDeath += GameOver;
 	}
 
 	void Start()
@@ -74,30 +76,36 @@ public class SpawnManager : MonoBehaviour
 			newEnemy.transform.parent = _enemyContainer.transform;
 			yield return _waitEnemyTime;
 		}
-     
-        _nrEmenies = _nrEmenies + _numberExtraEnemies;
+
+		_nrEmenies = _nrEmenies + _numberExtraEnemies;
 		_nrEmeniesActive = _nrEmenies;
 		yield return new WaitForSeconds(_timeBetWave);
 		_waveNr++;
         OnUpdatingWaveNr?.Invoke(_waveNr);
 
-		if (_waveNr < 3)
+		if (_waveNr < 2)
 		{
 			StartCoroutine(SpawnEnemiesRoutine());
 		}
-		else
+		else if (_waveNr == 2)
 		{
 			if (_gameRunning == true)
 			{
 				Instantiate(_bigEnemy);
+				StartCoroutine(SpawnEnemiesRoutine());
 			}
+		}
+		else if (_waveNr == 3)
+		{
+			_lastWave = true;
+			Instantiate(_bossAIEnemy);
 		}		
 	}
 
 	IEnumerator SpawnPowerUPRoutine()
 	{
 		yield return _wait2Secs;
-		while (_gameRunning == true)
+		while (_gameRunning == true && _lastWave == false)
 		{
 			int randomPowerUP = UnityEngine.Random.Range(0, _powerUPPrefab.Length);
             GameObject newPower = Instantiate(_powerUPPrefab[randomPowerUP]);
@@ -122,7 +130,7 @@ public class SpawnManager : MonoBehaviour
 	IEnumerator ExtraFireRoutine()
 	{
         yield return _wait2Secs;
-		while (_gameRunning == true)
+		while (_gameRunning == true && _lastWave == false)
         {
 			int randomPowerUP = UnityEngine.Random.Range(0, _powerUPExtraFire.Length);
 			yield return new WaitForSeconds(UnityEngine.Random.Range(3f, 6f));
@@ -134,7 +142,7 @@ public class SpawnManager : MonoBehaviour
 	private void OnDisable()
 	{
 		Player.OnDeath -= GameOver;
-		BigEnemy.OnBigEnemyDead -= GameOver;
 		Asteroid.OnAsteroidDestroyed -= StartSpawning;
+		EnemyBossAI.OnBossAIDeath -= GameOver;
 	}
 }

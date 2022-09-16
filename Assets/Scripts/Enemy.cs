@@ -5,7 +5,7 @@ using System;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float _speed;
+	[SerializeField] private float _speed;
 	[SerializeField] private float _speedTowardsPlayer;
 
 	[SerializeField] private Animator _anim;
@@ -96,9 +96,24 @@ public class Enemy : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (_shieldOn)
+		if (_shieldOn == false)
 		{
-			_shieldOn = false;
+			if (other.CompareTag("Player"))
+			{
+				_isThisEnemyAlive = false;
+				OnEnemyDeathPlayer?.Invoke();
+				EnemyDeath();
+			}
+
+			else if (other.CompareTag("Laser"))
+			{
+				_isThisEnemyAlive = false;
+
+				int score = UnityEngine.Random.Range(10, 30);
+				Destroy(other.gameObject);
+				OnEnemyDeathLaser?.Invoke(score);
+				EnemyDeath();
+			}
 		}
 		else
 		{
@@ -111,12 +126,12 @@ public class Enemy : MonoBehaviour
 
 			else if (other.CompareTag("Laser"))
 			{
-				Debug.Log("detected laser" + gameObject.name);
-				_isThisEnemyAlive = false;
+				_shieldOn = false;
 				int score = UnityEngine.Random.Range(10, 30);
 				Destroy(other.gameObject);
 				OnEnemyDeathLaser?.Invoke(score);
-				EnemyDeath();
+
+				_shieldEnemy.SetActive(false);
 			}
 		}
 	}
@@ -203,7 +218,6 @@ public class Enemy : MonoBehaviour
             }
 		}
 	}
-
 	
 	private void ShieldForTheEnemy()
 	{

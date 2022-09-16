@@ -176,7 +176,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 8b9a8d512f96d4438ad301d5c2564da4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -201,9 +201,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 2
-  _lives: 5
+  _lives: 3
   _isAlive: 0
   _scoreEnemyKilling: 0
+  _gameOver: 0
   _smallExploOffset: {x: 0, y: 5, z: 0}
   _laserPrefab: {fileID: 4837558445738069599, guid: 7f09aa2103e144344811332dfa792e1b, type: 3}
   _explosionPrefab: {fileID: 992446767}

@@ -1128,17 +1128,14 @@ MonoBehaviour:
   _isTripleShotActive: 0
   _typeOfFire: 0
   _speedPowerUP: 10
-  _isSpeepPowerUPActive: 0
   _isShieldOn: 0
   _shieldGo:
   - {fileID: 545143205}
   - {fileID: 1333150705}
   - {fileID: 1097589860}
   _shieldNumber: 3
-  _isExtraFire: 0
   _extraFirePrefab: {fileID: 446453727005480891, guid: 69f39126480cb4774881def7302fbd2f, type: 3}
   _speedSlow: 0.5
-  _isHomingProj: 0
   _homingProjPrefab: {fileID: 4757790685218631078, guid: 8c7f2cd59a5514a7cbd9e9320f18f6c7, type: 3}
 --- !u!1 &443606039
 GameObject:
@@ -2764,7 +2761,8 @@ MonoBehaviour:
   _enemyPrefab: {fileID: 5423309683584635154, guid: 98ef583a4814340f4a71c7231f928feb, type: 3}
   _enemyContainer: {fileID: 1645064122}
   _bigEnemy: {fileID: 1906689053765200048, guid: 8de78fb3684194c7282b805bc4e1c10b, type: 3}
-  _nrEmenies: 5
+  _bossAIEnemy: {fileID: 6202432511609189599, guid: 53201145b26dd445b931fca8ec7410cc, type: 3}
+  _nrEmenies: 10
   _nrEmeniesActive: 0
   _waveNr: 1
   _timeBetWave: 10

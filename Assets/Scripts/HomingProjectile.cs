@@ -40,7 +40,7 @@ public class HomingProjectile : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.CompareTag("Enemy") && !_enemiesList.Contains(other.gameObject))
+		if ((other.CompareTag("Enemy") || other.CompareTag("BigEnemy")) && !_enemiesList.Contains(other.gameObject))
 		{
 			_enemiesList.Add(other.gameObject);
 			_enemyTrans = _enemiesList[0].transform;

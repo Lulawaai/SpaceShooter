@@ -22,6 +22,7 @@ public class AudioManager : MonoBehaviour
 		Enemy.OnEnemyDeath += PlayExplosionSound;
 		BigEnemy.OnBigEnemyDead += PlayExplosionSound;
 		BigEnemy.OnbigEnemyExplosion += PlayExplosionSound;
+		EnemyBossAI.OnBossAIHitPlaySound += PlayExplosionSound;
 	}
 
 	private void PlayNoMoreAmmo()
@@ -66,5 +67,6 @@ public class AudioManager : MonoBehaviour
 		Enemy.OnEnemyDeath -= PlayExplosionSound;
 		BigEnemy.OnBigEnemyDead -= PlayExplosionSound;
 		BigEnemy.OnbigEnemyExplosion -= PlayExplosionSound;
+		EnemyBossAI.OnBossAIHitPlaySound -= PlayExplosionSound;
 	}
 }

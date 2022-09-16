@@ -37,7 +37,8 @@ public class UIManager : MonoBehaviour
 	{
 		Enemy.OnEnemyDeathLaser += UpdateScore;
 		BigEnemy.OnEnemyDeadScore += UpdateScore;
-		BigEnemy.OnBigEnemyDead += PlayerWonLevel;
+		EnemyBossAI.OnBossAIHit += UpdateScore;
+		EnemyBossAI.OnBossAIDeath += PlayerWonLevel;
 		Player.OnLossingLives += UpdateLives;
         Player.OnDeath += PlayerDeath;
 		Player.OnPlayerFiring += FireRemoving;
@@ -190,6 +191,7 @@ public class UIManager : MonoBehaviour
         PowerUp.OnPlayerHit_FireRefill -= FireAdding;
 		SpawnManager.OnUpdatingWaveNr -= UpdateWaveNr;
 		BigEnemy.OnEnemyDeadScore -= UpdateScore;
-		BigEnemy.OnBigEnemyDead -= PlayerWonLevel;
+		EnemyBossAI.OnBossAIHit -= UpdateScore;
+		EnemyBossAI.OnBossAIDeath -= PlayerWonLevel;
 	}
 }

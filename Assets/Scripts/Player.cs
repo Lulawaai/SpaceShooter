@@ -29,7 +29,6 @@ public class Player : MonoBehaviour
 	[SerializeField] private Vector3 _laserOffset = new Vector3(0, 1.14f, 0);
 	[SerializeField] private Vector3 _3laserOffset = new Vector3(0, -3.35f, 0);
 	[SerializeField] private float _fireRate = 0.5f;
-	[SerializeField] private bool _isTripleShotActive = false;
 	[SerializeField] private int _typeOfFire = 0;
 	private float _nextFire;
 	private WaitForSeconds _wait5secs = new WaitForSeconds(5.0f);
@@ -39,7 +38,6 @@ public class Player : MonoBehaviour
 
 	[Header("Speed")]
 	[SerializeField] private float _speedPowerUP;
-	[SerializeField] private bool _isSpeepPowerUPActive = false;
 
 	[Header("Shield")]
 	[SerializeField] private bool _isShieldOn = false;
@@ -47,7 +45,6 @@ public class Player : MonoBehaviour
 	[SerializeField] private int _shieldNumber = 3;
 
 	[Header("ExtraFire")] //Extrafire has a bigger collider
-	[SerializeField] private bool _isExtraFire = false;
 	[SerializeField] private GameObject _extraFirePrefab;
 
 	[Header("Slow")]
@@ -55,7 +52,6 @@ public class Player : MonoBehaviour
 	private WaitForSeconds _wait3secs = new WaitForSeconds(3.0f);
 
 	[Header("HomingProjectile")]
-	[SerializeField] private bool _isHomingProj;
 	[SerializeField] private GameObject _homingProjPrefab;
 
 	public static event Action OnDeath;
@@ -82,9 +78,10 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Slow += SlowDown;
 		PowerUp.OnPlayerHit_HomingP += HomingProjectile;
 		Enemy.OnEnemyDeathPlayer += Damage;
-		BigEnemy.OnBigEnemyDead += GameOver;
 		LaserEnemy.OnPlayerDamage += Damage;
 		LaserEnemyHori.OnPlayerDamage += Damage;
+		LaserBallBossAI.OnkillingPlayer += Damage;
+		EnemyBossAI.OnBossAIDeath += GameOver;
 	}
 
 	private void Start()
@@ -264,40 +261,16 @@ public class Player : MonoBehaviour
 				case 3: //Homing - 3
 					Instantiate(_homingProjPrefab, transform.position + _laserOffset, Quaternion.identity);
 					_numberShots -= 1;
+					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
 					_typeOfFire = 0;
 					break;
-
 			}
-
-			/*if (_isExtraFire == false)
-			{
-				if (_isTripleShotActive == true)
-				{
-					Instantiate(_tripleLaserPrefab, transform.position + _3laserOffset, Quaternion.identity);
-					_numberShots -= 1;
-					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
-					StartCoroutine(TripleLaserCoroutine());
-				}
-				else
-				{
-					Instantiate(_laserPrefab, transform.position + _laserOffset, Quaternion.identity);
-					_numberShots -= 1;
-					OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
-				}
-			}
-			else
-			{
-				Instantiate(_extraFirePrefab, transform.position + _laserOffset, Quaternion.identity);
-				_numberShots -= 1;
-				OnPlayerFiring?.Invoke(_numberShots); //to play fire sound audioManager && UIManager remove fire
-			}*/
 		}
 	}
 
 	#region powerUps
 	private void TripleShotPowerUP()
 	{
-		_isTripleShotActive = true;
 		_typeOfFire = 1;
 		OnPowerUp?.Invoke();
 	}
@@ -306,12 +279,10 @@ public class Player : MonoBehaviour
 	{
 		yield return _wait5secs;
 		_typeOfFire = 0;
-		_isTripleShotActive = false;
 	}
 
 	private void SpeedPowerUP()
 	{
-		_isSpeepPowerUPActive = true;
 		_speedSituations = 1;
 		OnPowerUp?.Invoke();
 	}
@@ -320,7 +291,6 @@ public class Player : MonoBehaviour
 	{
 		yield return _wait5secs;
 		_speedSituations = 0;
-		_isSpeepPowerUPActive = false;
 	}
 
 	private void ShieldPowerUP()
@@ -338,7 +308,6 @@ public class Player : MonoBehaviour
 
 	private void ExtraFire()
 	{
-		_isExtraFire = true;
 		_typeOfFire = 2;
 		StartCoroutine(ExtraFireRoutine());
 	}
@@ -347,12 +316,12 @@ public class Player : MonoBehaviour
 	{
 		yield return _wait5secs;
 		_typeOfFire = 0;
-		_isExtraFire = false;
 	}
 
 	private void FireRefill()
 	{
 		_numberShots = 15;
+		_isOutofShots = false;
 	}
 
 	private void HealthRefill()
@@ -367,7 +336,6 @@ public class Player : MonoBehaviour
 
 	private void HomingProjectile()
 	{
-		_isHomingProj = true;
 		_typeOfFire = 3;
 	}
 	#endregion
@@ -397,8 +365,9 @@ public class Player : MonoBehaviour
 		PowerUp.OnPlayerHit_Slow -= SlowDown;
 		PowerUp.OnPlayerHit_HomingP -= HomingProjectile;
 		Enemy.OnEnemyDeathPlayer -= Damage;
-		BigEnemy.OnBigEnemyDead -= GameOver;
 		LaserEnemy.OnPlayerDamage -= Damage;
         LaserEnemyHori.OnPlayerDamage -= Damage;
+		LaserBallBossAI.OnkillingPlayer -= Damage;
+		EnemyBossAI.OnBossAIDeath -= GameOver;
 	}
 }

@@ -8,36 +8,36 @@ public class CameraShake : MonoBehaviour
     private Vector3 _originPos = new Vector3(0, 0, -10);
 
     private void OnEnable()
-    {
-        Player.OnDamageCameraShake += CameraMove;
-    }
+	{
+		Player.OnDamageCameraShake += CameraMove;
+	}
 
-    private void CameraMove(float magnitude, float duration)
-    {
-        StartCoroutine(ShakeRoutine(magnitude, duration)); 
-    }
+	private void CameraMove(float magnitude, float duration)
+	{
+		StartCoroutine(ShakeRoutine(magnitude, duration));
+	}
 
-    private IEnumerator ShakeRoutine(float magnitude, float duration)
-    {
-        float timeElapsed = 0;
+	private IEnumerator ShakeRoutine(float magnitude, float duration)
+	{
+		float timeElapsed = 0;
 
-        while (timeElapsed < duration)
-        {
-            float xOffset = UnityEngine.Random.Range(-0.5f, 0.5f) * magnitude;
-            float yOffset = UnityEngine.Random.Range(-0.5f, 0.5f) * magnitude;
+		while (timeElapsed < duration)
+		{
+			float xOffset = UnityEngine.Random.Range(-0.5f, 0.5f) * magnitude;
+			float yOffset = UnityEngine.Random.Range(-0.5f, 0.5f) * magnitude;
 
-            transform.position = new Vector3(xOffset, yOffset, -10);
+			transform.position = new Vector3(xOffset, yOffset, -10);
 
-            timeElapsed += Time.deltaTime;
+			timeElapsed += Time.deltaTime;
 
-            yield return null;
-        }
+			yield return null;
+		}
 
-        transform.position = _originPos;
-    }
+		transform.position = _originPos;
+	}
 
-    private void OnDisable()
-    {
-        Player.OnDamageCameraShake -= CameraMove;
-    }
+	private void OnDisable()
+	{
+		Player.OnDamageCameraShake -= CameraMove;
+	}
 }

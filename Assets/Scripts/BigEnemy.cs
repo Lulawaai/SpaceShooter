@@ -10,8 +10,7 @@ public class BigEnemy : MonoBehaviour
 	[SerializeField] private int _lives;
 	[SerializeField] private bool _isAlive;
 	[SerializeField] private int _scoreEnemyKilling;
-
-	[SerializeField] private Vector3 _smallExploOffset = new Vector3(0, 2.0f, 0);
+	[SerializeField] private bool _gameOver;
 	[SerializeField] private GameObject _laserPrefab;
 
 	[Header("To Destroy this")]
@@ -31,6 +30,7 @@ public class BigEnemy : MonoBehaviour
 
 	private void Start()
 	{
+		_gameOver = false;
 		_moveLeft = RandomLeftOrRight();
 		_readyToStart = false;
 		_isAlive = true;
@@ -118,7 +118,7 @@ public class BigEnemy : MonoBehaviour
 			if (_lives > 1)
 			{
 				_lives--;
-				GameObject smallExplosion = Instantiate(_smallExploPrefab, other.transform.position + _smallExploOffset, Quaternion.identity);
+				GameObject smallExplosion = Instantiate(_smallExploPrefab, other.transform.position, Quaternion.identity);
 				smallExplosion.transform.parent = gameObject.transform;
 
 				OnbigEnemyExplosion?.Invoke();//AudioManager audio explosion
@@ -147,8 +147,13 @@ public class BigEnemy : MonoBehaviour
 		}
 	}
 
+	private void GameOver()
+	{
+		_gameOver = true;
+	}
 	private void Death()
 	{
+		_isAlive = false;
 		OnBigEnemyDead?.Invoke(); //audiomanagerExploSound  //GamemanagerEndGame 
 		OnEnemyDeadScore?.Invoke(_scoreEnemyKilling); //UI
 		Destroy(this.gameObject, 2.0f);
